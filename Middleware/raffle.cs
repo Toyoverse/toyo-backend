@@ -5,13 +5,13 @@ namespace BackendToyo.Middleware
 {
     public static class raffle
     {
-        public static SortViewModel main(bool fortfied = false)
+        public static SortViewModel main(bool fortified = false)
         { 
             int sort = rnd(0,1000);
             int raridade = 0;
             int toyoRaridade = 0;
 
-            if(fortfied) {
+            if(fortified) {
                 if (sort <= 5) 
                     raridade = 6;
                 else if (sort <= 20)

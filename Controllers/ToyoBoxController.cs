@@ -37,9 +37,101 @@ namespace BackendToyo.Controllers
         }
 
         [HttpGet("sortBox")]
+        public SortViewModel sortBox(string TypeId, string TokenId, bool Fortified = false,  string name)
+        {
+            
+            return raffle.main(Fortified);
+
+            /*
+                {
+                    "name": "Tatsu",
+                    "attributes": [
+                        {
+                            "display_type": "number",
+                            "trait_type": "Type",
+                            "value": 9
+                        },
+                        {
+                            "trait_type": "Toyo",
+                            "value": "Tatsu"
+                        },
+                        {
+                            "trait_type": "Region",
+                            "value": "Kytunt"
+                        },
+                        {
+                            "trait_type": "Rarity",
+                            "value": "Common Edition"
+                        },
+                        {
+                            "display_type": "number", 
+                            "trait_type": "Vitality", 
+                            "value": 1
+                        },
+                        {
+                            "display_type": "number", 
+                            "trait_type": "Strength", 
+                            "value": 1
+                        },
+                        {
+                            "display_type": "number", 
+                            "trait_type": "Resistance", 
+                            "value": 1
+                        },
+                        {
+                            "display_type": "number", 
+                            "trait_type": "CyberForce", 
+                            "value": 1
+                        },
+                        {
+                            "display_type": "number", 
+                            "trait_type": "Resilience", 
+                            "value": 1
+                        },
+                        {
+                            "display_type": "number", 
+                            "trait_type": "Precision", 
+                            "value": 1
+                        },
+                        {
+                            "display_type": "number", 
+                            "trait_type": "Technique", 
+                            "value": 1
+                        },
+                        {
+                            "display_type": "number", 
+                            "trait_type": "Analysis", 
+                            "value": 1
+                        },
+                        {
+                            "display_type": "number", 
+                            "trait_type": "Speed", 
+                            "value": 1
+                        },
+                        {
+                            "display_type": "number", 
+                            "trait_type": "Agility", 
+                            "value": 1
+                        },
+                        {
+                            "display_type": "number", 
+                            "trait_type": "Stamina", 
+                            "value": 1
+                        },
+                        {
+                            "display_type": "number", 
+                            "trait_type": "Luck", 
+                            "value": 1
+                        }
+                    ]
+                }
+            */
+        }
+
+        /* [HttpGet("sortBox")]
         public SortViewModel sortBox(string TypeId, string TokenId)
         {
             return raffle.main();
-        }
+        } */
     }
 }
