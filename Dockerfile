@@ -1,9 +1,23 @@
-FROM mcr.microsoft.com/dotnet/aspnet:5.0.12
+FROM mcr.microsoft.com/dotnet/sdk:5.0.403
 
-COPY bin/Release/net5.0/publish/ /home/BackEnd
+COPY . /home/full-backend
 
-WORKDIR /home/BackEnd
+RUN cd /home && \
+    wget https://github.com/jwilder/dockerize/releases/download/v0.6.1/dockerize-linux-amd64-v0.6.1.tar.gz && \
+    tar -C /usr/local/bin -xzvf dockerize-linux-amd64-v0.6.1.tar.gz && \
+    rm dockerize-linux-amd64-v0.6.1.tar.gz
+
+RUN cd /home/full-backend && \
+    chmod +x scriptDocker.sh && \
+    mv scriptDocker.sh /home/
+
+RUN dotnet dev-certs https --trust
+
+ENV ASPNETCORE_URLS=https://+;http://+
+ENV ASPNETCORE_HTTPS_PORT=443
+ENV ASPNETCORE_ENVIRONMENT=Development
 
 EXPOSE 80
-
-ENTRYPOINT ["dotnet", "BackendToyo.dll"]
+EXPOSE 5000
+EXPOSE 5001
+EXPOSE 443
