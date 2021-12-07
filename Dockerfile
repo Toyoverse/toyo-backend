@@ -13,8 +13,8 @@ RUN cd /home/full-backend && \
 
 RUN dotnet dev-certs https --trust
 
-ENV ASPNETCORE_URLS=https://+;http://+
-ENV ASPNETCORE_HTTPS_PORT=443
+ENV ASPNETCORE_URLS=http://+
+ENV ASPNETCORE_HTTPS_PORT=80
 ENV ASPNETCORE_ENVIRONMENT=Development
 
 EXPOSE 80

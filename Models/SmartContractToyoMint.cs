@@ -1,3 +1,5 @@
+using System;
+
 namespace BackendToyo.Models
 {
     public class SmartContractToyoMint
@@ -9,7 +11,7 @@ namespace BackendToyo.Models
         public string WalletAddress { get; set; } 
         public int TypeId { get; set; } 
         public int TotalSypply { get; set; } 
-        public int Gwei { get; set; } 
+        public Int64 Gwei { get; set; } 
         public int BlockNumber { get; set; } 
 
     }
