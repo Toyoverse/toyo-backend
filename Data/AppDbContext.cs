@@ -20,7 +20,7 @@ namespace BackendToyo.Data
         public DbSet<SmartContractToyoSync> SmartContractToyoSyncs { get; set; }
         public DbSet<SmartContractToyoTransfer> SmartContractToyoTransfers { get; set; }
         public DbSet<SmartContractToyoType> SmartContractToyoTypes { get; set; }
-
+        public DbSet<SmartContractToyoSwap> SmartContractToyoSwaps { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {   
@@ -35,6 +35,9 @@ namespace BackendToyo.Data
 
             modelBuilder.Entity<SmartContractToyoType>()
                 .HasKey(p => new { p.TransactionHash, p.TypeId, p.ChainId });
+
+            modelBuilder.Entity<SmartContractToyoSwap>()
+                .HasKey(p => new { p.TransactionHash, p.TokenId, p.ChainId});
 
             modelBuilder.Entity<Event>()
                 .HasKey(p => p.Id);  
