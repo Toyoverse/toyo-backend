@@ -2,7 +2,7 @@ version: "3.9"
 services:
   backend-toyo:
     build: .
-    command: sh -c "dockerize -wait tcp://db:3306 -timeout 300s -wait-retry-interval 10s /home/scriptDocker.sh"
+    command: sh -c "./home/scriptDocker.sh"
     ports:
       - "443:443"
       - "5001:5001"
