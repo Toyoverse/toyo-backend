@@ -1,17 +1,6 @@
 version: "3.9"
 services:
-  db:
-    image: mysql
-    command: --default-authentication-plugin=mysql_native_password
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: f97a07ce59
-    ports:
-      - "5655:3306"
-  
   backend-toyo:
-    depends_on:
-      - db
     build: .
     command: sh -c "dockerize -wait tcp://db:3306 -timeout 300s -wait-retry-interval 10s /home/scriptDocker.sh"
     ports:
