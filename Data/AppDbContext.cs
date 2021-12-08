@@ -71,6 +71,14 @@ namespace BackendToyo.Data
                 .WithMany()
                 .HasForeignKey(p => p.TokenId)
                 .HasPrincipalKey(p => p.Id);
+
+            modelBuilder.Entity<Toyo>()
+                .HasKey(p => p.Id);     
+
+            modelBuilder.Entity<Parts>()
+                .HasKey(p => p.Id);     
+
+
         }
     }
 }

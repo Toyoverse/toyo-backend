@@ -13,6 +13,5 @@ namespace BackendToyo.Models
         public int TotalSypply { get; set; } 
         public Int64 Gwei { get; set; } 
         public int BlockNumber { get; set; } 
-
     }
 }

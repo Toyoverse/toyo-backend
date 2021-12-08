@@ -15,5 +15,5 @@ services:
     build: .
     command: sh -c "dockerize -wait tcp://db:3306 -timeout 300s -wait-retry-interval 10s /home/scriptDocker.sh"
     ports:
-      - "80:80"
-      - "5000:5000"
+      - "443:443"
+      - "5001:5001"
