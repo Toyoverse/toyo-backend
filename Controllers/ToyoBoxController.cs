@@ -13,10 +13,10 @@ namespace BackendToyo.Controllers
     [Route("api/[controller]")]
     [ApiController]
 
-    public class toyoBoxController : ControllerBase
+    public class ToyoBoxController : ControllerBase
     {
         private readonly AppDbContext _context;
-        public toyoBoxController(AppDbContext context)
+        public ToyoBoxController(AppDbContext context)
         {
             _context = context;
         }
