@@ -1,16 +1,15 @@
 using System;
-using System.Random;
 
 namespace BackendToyo.Middleware
 {
     public static class raffle
     {
-        public static void main()
-        {
-            int qRari = System.Random().Next(1, 100);
+        public static int[][] main(bool fortfied = false)
+        { 
+            
+            int qRari = new Random().Next(1, 100);
 
             int nRnd = rnd(0, 1000);
-
             int min = qRari * 4 + 16; //20 - 40
 
             int[] sOrd = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
@@ -50,8 +49,7 @@ namespace BackendToyo.Middleware
                 new int[] { oqParts[10][rnd(0, oqParts[10].Length - 1)], rnd(min / 5 -1, 10) }
             };
 
-            Console.WriteLine(oqParts);
-            Console.WriteLine(qStats);
+            return oqParts;
 
         }
         public static int rnd(int _min, int _max, int but = -999) {
@@ -103,7 +101,7 @@ namespace BackendToyo.Middleware
         public static int preRnd(int n1, int n2, int but = -1) {
             int saida = 0;
 
-            var random = new Random(Guid.NewGuid().GetHashCode())
+            var random = new Random(Guid.NewGuid().GetHashCode());
 
             saida = random.Next(n1, n2 + 1);
 

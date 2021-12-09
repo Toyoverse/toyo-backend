@@ -37,9 +37,9 @@ namespace BackendToyo.Controllers
         }
 
         [HttpGet("sortBox")]
-        public async void sortBox(string TypeId, string TokenId)
+        public int[][] sortBox(string TypeId, string TokenId)
         {
-            await raffle.main();
+            return raffle.main();
         }
     }
 }
