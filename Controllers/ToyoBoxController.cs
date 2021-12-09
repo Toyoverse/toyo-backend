@@ -22,18 +22,17 @@ namespace BackendToyo.Controllers
         }
 
         [HttpGet("getBoxes")]
-        public async Task<ActionResult<List<BoxesViewModel>>> GetBoxes(string walletAddress)
+        public async Task<ActionResult<List<BoxesViewModel>>> GetBoxes(string walletAddress, string chainId)
         {            
             var query = from sctt in _context.Set<SmartContractToyoTransfer>()
                         join sctm in _context.Set<SmartContractToyoMint>()
                             on sctt.TokenId equals sctm.TokenId
                         join sctty in _context.Set<SmartContractToyoType>()
                             on sctm.TypeId equals sctty.TypeId
-                        where sctt.WalletAddress == walletAddress
+                        where sctt.WalletAddress == walletAddress && sctt.ChainId == chainId  && sctty.Name.Contains("Box") == true
                         select new BoxesViewModel(sctt.TokenId, sctm.TypeId, sctty.Name);
 
             return await query.ToListAsync();
         }
-        
     }
 }

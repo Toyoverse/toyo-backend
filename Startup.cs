@@ -30,6 +30,12 @@ namespace BackendToyo
         {
             string sqlConnection = Configuration.GetConnectionString("DefaultConnection");
 
+            services.AddCors(options => {
+                options.AddDefaultPolicy(builder => {
+                    builder.WithOrigins("*");
+                });
+            });
+
             //services.AddDbContext<AppDbContext>(options => options.UseMySql(sqlConnection, ServerVersion.AutoDetect(sqlConnection)));
             services.AddDbContext<AppDbContext>(options => options.UseMySql(sqlConnection, ServerVersion.AutoDetect(sqlConnection)));
 
