@@ -6,8 +6,43 @@ namespace BackendToyo.Middleware
     {
         public static int[][] main(bool fortfied = false)
         { 
+            int sort = rnd(0,1000);
+            int raridade = 0;
+            int toyoRaridade = 0;
+
+            if(fortfied) {
+                if (sort <= 5) 
+                    raridade = 6;
+                else if (sort <= 20)
+                    raridade = 5;
+                else if (sort <= 60)
+                    raridade = 4;
+                else if (sort <= 160)
+                    raridade = 3;
+                else if (sort <= 480)
+                    raridade = 2;
+                else
+                    raridade = 1;
+            } else {
+                if (sort <= 25)
+                    raridade = 6;
+                else if (sort <= 80)
+                    raridade = 5;
+                else if (sort <= 280)
+                    raridade = 4;
+                else
+                    raridade = 3;
+            }
+
+            if (raridade == 3)
+                if (rnd(0,100) <= 50)
+                    toyoRaridade = 3;
+                else
+                    toyoRaridade = 4;
+            if (raridade >= 4)
+                toyoRaridade = raridade + 1;
             
-            int qRari = new Random().Next(1, 100);
+            int qRari = toyoRaridade;
 
             int nRnd = rnd(0, 1000);
             int min = qRari * 4 + 16; //20 - 40
