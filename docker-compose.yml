@@ -1,8 +1,11 @@
-version: "3.9"
+version: "3.8"
 services:
   backend-toyo:
-    build: .
-    command: sh -c "./home/scriptDocker.sh"
+    image: mcr.microsoft.com/dotnet/sdk:5.0.403
+    volumes:
+        - .:/home/backend
     ports:
+      - "80:80"
       - "443:443"
+      - "5000:5000"
       - "5001:5001"

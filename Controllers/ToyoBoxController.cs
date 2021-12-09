@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BackendToyo.Data;
 using BackendToyo.Models;
+using BackendToyo.Middleware;
 
 namespace BackendToyo.Controllers
 {
@@ -33,6 +34,12 @@ namespace BackendToyo.Controllers
                         select new BoxesViewModel(sctt.TokenId, sctm.TypeId, sctty.Name);
 
             return await query.ToListAsync();
+        }
+
+        [HttpGet("sortBox")]
+        public async void sortBox(string TypeId, string TokenId)
+        {
+            await raffle.main();
         }
     }
 }
