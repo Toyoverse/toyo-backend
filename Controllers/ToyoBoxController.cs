@@ -37,7 +37,7 @@ namespace BackendToyo.Controllers
         }
 
         [HttpGet("sortBox")]
-        public int[][] sortBox(string TypeId, string TokenId)
+        public SortViewModel sortBox(string TypeId, string TokenId)
         {
             return raffle.main();
         }

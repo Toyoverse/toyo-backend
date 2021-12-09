@@ -1,10 +1,11 @@
 using System;
+using BackendToyo.Models;
 
 namespace BackendToyo.Middleware
 {
     public static class raffle
     {
-        public static int[][] main(bool fortfied = false)
+        public static SortViewModel main(bool fortfied = false)
         { 
             int sort = rnd(0,1000);
             int raridade = 0;
@@ -84,8 +85,12 @@ namespace BackendToyo.Middleware
                 new int[] { oqParts[10][rnd(0, oqParts[10].Length - 1)], rnd(min / 5 -1, 10) }
             };
 
-            return oqParts;
+            SortViewModel svm = new SortViewModel();
+            svm.oqParts = oqParts;
+            svm.qStats = qStats;
+            svm.toyoRaridade = toyoRaridade;
 
+            return svm;
         }
         public static int rnd(int _min, int _max, int but = -999) {
 
