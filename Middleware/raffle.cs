@@ -35,15 +35,17 @@ namespace BackendToyo.Middleware
                     raridade = 3;
             }
 
-            if (raridade == 3)
+            if (raridade == 1 || raridade == 2)
+                toyoRaridade = raridade;
+            else if (raridade == 3)
                 if (rnd(0,100) <= 50)
                     toyoRaridade = 3;
                 else
                     toyoRaridade = 4;
-            if (raridade >= 4)
+            else if (raridade >= 4)
                 toyoRaridade = raridade + 1;
             
-            int qRari = toyoRaridade;
+            int qRari = raridade;
 
             int nRnd = rnd(0, 1000);
             int min = qRari * 4 + 16; //20 - 40
@@ -89,6 +91,7 @@ namespace BackendToyo.Middleware
             svm.oqParts = oqParts;
             svm.qStats = qStats;
             svm.toyoRaridade = toyoRaridade;
+            svm.raridade = raridade;
 
             return svm;
         }
