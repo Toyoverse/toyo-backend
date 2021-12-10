@@ -81,25 +81,19 @@ namespace BackendToyo.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<SmartContractToyoSwap>> PostSmartContractToyoSwap(SmartContractToyoSwap smartContractToyoSwap)
-        {
-            _context.SmartContractToyoSwaps.Add(smartContractToyoSwap);
-            try
+        { 
+            var ToyoSwap = await _context.SmartContractToyoSwaps.FirstOrDefaultAsync(p => p.TransactionHash == smartContractToyoSwap.TransactionHash && p.ToTokenId == smartContractToyoSwap.ToTokenId && p.ChainId == smartContractToyoSwap.ChainId);
+            
+            if (ToyoSwap == null)
             {
-                await _context.SaveChangesAsync();
+                _context.SmartContractToyoSwaps.Add(smartContractToyoSwap);
+            } else {
+                ToyoSwap = smartContractToyoSwap;
             }
-            catch (DbUpdateException)
-            {
-                if (SmartContractToyoSwapExists(smartContractToyoSwap.TransactionHash))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return CreatedAtAction("GetSmartContractToyoSwap", new { id = smartContractToyoSwap.TransactionHash }, smartContractToyoSwap);
+            
+            await _context.SaveChangesAsync();
+            
+            return smartContractToyoSwap;
         }
 
         // DELETE: api/SmartContractToyoSwap/5
