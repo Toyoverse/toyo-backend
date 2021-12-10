@@ -37,7 +37,7 @@ namespace BackendToyo.Data
                 .HasKey(p => new { p.TransactionHash, p.TypeId, p.ChainId });
 
             modelBuilder.Entity<SmartContractToyoSwap>()
-                .HasKey(p => new { p.TransactionHash, p.TokenId, p.ChainId});
+                .HasKey(p => new { p.TransactionHash, p.FromTokenId, p.ToTokenId, p.ChainId});
 
             modelBuilder.Entity<Event>()
                 .HasKey(p => p.Id);  

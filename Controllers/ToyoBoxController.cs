@@ -37,7 +37,7 @@ namespace BackendToyo.Controllers
         }
 
         [HttpGet("sortBox")]
-        public SortViewModel sortBox(string TypeId, string TokenId, bool Fortified = false,  string name)
+        public SortViewModel sortBox(string TypeId, string TokenId, string name, bool Fortified = false)
         {
             
             return raffle.main(Fortified);
@@ -128,10 +128,11 @@ namespace BackendToyo.Controllers
             */
         }
 
-        /* [HttpGet("sortBox")]
-        public SortViewModel sortBox(string TypeId, string TokenId)
+        [HttpPost("postPorcentageBonus")]
+        public bool postPorcentageBonus(int toyoId, int bonus)
         {
-            return raffle.main();
-        } */
+            Console.WriteLine("toyoID: " + toyoId + " bonus: " + bonus);
+            return true;
+        }
     }
 }

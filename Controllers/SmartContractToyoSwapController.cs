@@ -30,11 +30,12 @@ namespace BackendToyo.Controllers
         }
 
         // GET: api/SmartContractToyoSwap/5
-        [HttpGet("{id}")]
+        [HttpGet("{FromTypeId}")]
         [ApiExplorerSettings(IgnoreApi = true)]
-        public async Task<ActionResult<SmartContractToyoSwap>> GetSmartContractToyoSwap(string id)
+
+        public async Task<ActionResult<SmartContractToyoSwap>> GetSmartContractToyoSwap(int FromTokenId, string ChainId)
         {
-            var smartContractToyoSwap = await _context.SmartContractToyoSwaps.FindAsync(id);
+            var smartContractToyoSwap = await _context.SmartContractToyoSwaps.FindAsync();
 
             if (smartContractToyoSwap == null)
             {
