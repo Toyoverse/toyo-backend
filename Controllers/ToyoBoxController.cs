@@ -36,6 +36,20 @@ namespace BackendToyo.Controllers
             return await query.ToListAsync();
         }
 
+         [HttpGet("getParts")]
+        public async Task<ActionResult<List<BoxesViewModel>>> getParts(string walletAddress, string chainId)
+        {            
+            var query = from sctt in _context.Set<SmartContractToyoTransfer>()
+                        join sctm in _context.Set<SmartContractToyoMint>()
+                            on sctt.TokenId equals sctm.TokenId
+                        join sctty in _context.Set<SmartContractToyoType>()
+                            on sctm.TypeId equals sctty.TypeId
+                        where sctt.WalletAddress == walletAddress && sctt.ChainId == chainId && sctty.TypeId >= 3 && sctty.TypeId <= 13
+                        select new BoxesViewModel(sctt.TokenId, sctm.TypeId, sctty.Name);
+
+            return await query.ToListAsync();
+        }
+
         [HttpGet("sortBox")]
         public SortViewModel sortBox(string TypeId, string TokenId, string name, bool Fortified = false)
         {
