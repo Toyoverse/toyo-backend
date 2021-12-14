@@ -10,7 +10,7 @@ namespace BackendToyo.Middleware
             int sort = rnd(0,1000);
             int raridade = 0;
             int toyoRaridade = 0;
-
+            
             if(!fortified) {
                 if (sort <= 5) 
                     raridade = 6;

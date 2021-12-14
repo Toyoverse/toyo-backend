@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using BackendToyo.Data;
 using BackendToyo.Models;
 using BackendToyo.Middleware;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace BackendToyo.Controllers
 {
@@ -36,7 +38,7 @@ namespace BackendToyo.Controllers
             return await query.ToListAsync();
         }
 
-         [HttpGet("getParts")]
+        [HttpGet("getParts")]
         public async Task<ActionResult<List<BoxesViewModel>>> getParts(string walletAddress, string chainId)
         {            
             var query = from sctt in _context.Set<SmartContractToyoTransfer>()
@@ -50,11 +52,63 @@ namespace BackendToyo.Controllers
             return await query.ToListAsync();
         }
 
+        [HttpGet("getToyos")]
+        public async Task<ActionResult<List<BoxesViewModel>>> getToyos(string walletAddress, string chainId)
+        {            
+            var query = from sctt in _context.Set<SmartContractToyoTransfer>()
+                        join sctm in _context.Set<SmartContractToyoMint>()
+                            on sctt.TokenId equals sctm.TokenId
+                        join sctty in _context.Set<SmartContractToyoType>()
+                            on sctm.TypeId equals sctty.TypeId
+                        where sctt.WalletAddress == walletAddress && sctt.ChainId == chainId && sctty.TypeId == 21
+                        select new BoxesViewModel(sctt.TokenId, sctm.TypeId, sctty.Name);
+
+            return await query.ToListAsync();
+        }
+
+        /* [HttpPost("postToyo")]
+        public Task<ActionResult<bool>> postToyo(string walletAddress, string chainId) {
+
+            return false;
+        } */
+
         [HttpGet("sortBox")]
-        public SortViewModel sortBox(string TypeId, string TokenId, string name, bool Fortified = false)
+        public SortViewModel sortBox(string TypeId, string TokenId, string walletAddress, bool Fortified = false)
         {
-            
-            return raffle.main(Fortified);
+            SortViewModel toyoRaffle = new SortViewModel();
+            toyoRaffle = raffle.main(Fortified);
+
+            /* var query = from scts in _context.Set<SmartContractToyoSwap>()
+                        join sctt in _context.Set<SmartContractToyoTransfer>()
+                            on new {
+                                _toyoTransaction = scts.TransactionHash,
+                                _toyoChain = scts.ChainId
+                            } equals new {
+                                _toyoTransaction = sctt.TransactionHash,
+                                _toyoChain = sctt.ChainId
+                            }
+                        where scts.FromTokenId == TokenId && sctt.WalletAddress == WalletAddress && scts.ToTypeId == 21
+                        select new { scts.TransactionHash, scts.ChainId, scts.ToTokenId };
+
+            var swapValue = await query.ToListAsync();
+
+            if(swapVallue.length > 0) {
+                List<data> _data = new List<data>();
+                _data.Add(new data()
+                {
+                    FromTypeId = TypeId,
+                    ToTypeId = 21,
+                    FromTokenId = TokenId,
+                    ToTokenId = swapValue.ToTokenId,
+                    WalletAddress = walletAddress,
+                    attributes = new Array()
+                });
+            } */
+
+            return toyoRaffle;
+
+
+
 
             /*
                 {
@@ -79,14 +133,22 @@ namespace BackendToyo.Controllers
                         },
                         {
                             "display_type": "number", 
-                            "trait_type": "Vitality", 
+                       <data> _data = new List<data>();
+                _data.Add(new data()
+                {
+                    FromTypeId = TypeId,
+                    ToTypeId = 22,
+                    FromTokenId = TokenId,
+                    ToTokenId = ,
+                    WalletAddress = ,
+                });     "trait_type": "Vitality", 
                             "value": 1
                         },
                         {
                             "display_type": "number", 
                             "trait_type": "Strength", 
                             "value": 1
-                        },
+                        },  //baseURL: "https://0.0.0.0:5001/api",
                         {
                             "display_type": "number", 
                             "trait_type": "Resistance", 
@@ -142,10 +204,10 @@ namespace BackendToyo.Controllers
             */
         }
 
-        [HttpPost("postPorcentageBonus")]
-        public bool postPorcentageBonus(int toyoId, int bonus)
+        [HttpPost("postPercentageBonus")]
+        public bool postPorcentageBonus([FromForm] string bonus)
         {
-            Console.WriteLine("toyoID: " + toyoId + " bonus: " + bonus);
+            Console.WriteLine("bonus: " + bonus);
             return true;
         }
     }
