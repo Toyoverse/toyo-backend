@@ -6,6 +6,6 @@ namespace BackendToyo.Models
     {
         public Guid Id { get; set; }
         public Int64 NFTId { get; set; }
-        public Guid TypeId { get; set; }
+        public int TypeId { get; set; }
     }
 }

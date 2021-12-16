@@ -36,6 +36,10 @@ namespace BackendToyo.Data
             modelBuilder.Entity<SmartContractToyoType>()
                 .HasKey(p => new { p.TransactionHash, p.TypeId, p.ChainId });
 
+            modelBuilder.Entity<SmartContractToyoType>()
+                .HasIndex(u => u.ChainId)
+                .IsUnique(false);
+
             modelBuilder.Entity<SmartContractToyoSwap>()
                 .HasKey(p => new { p.TransactionHash, p.FromTokenId, p.ToTokenId, p.ChainId});
 
@@ -46,16 +50,28 @@ namespace BackendToyo.Data
                 .HasKey(p => p.Id);                
 
             modelBuilder.Entity<TypeToken>()
-                .HasKey(p => p.Id);     
+                .HasKey(p => new { p.TypeId, p.ChainId });
 
             modelBuilder.Entity<Token>()
                 .HasKey(p => p.Id);
+
+            modelBuilder.Entity<TypeToken>()
+                .HasOne<SmartContractToyoType>()
+                .WithMany()
+                .HasForeignKey(p => p.TypeId)
+                .HasPrincipalKey(p => p.TypeId);
            
+            modelBuilder.Entity<TypeToken>()
+                .HasOne<SmartContractToyoType>()
+                .WithMany()
+                .HasForeignKey(p => p.ChainId)
+                .HasPrincipalKey(p => p.ChainId);
+
             modelBuilder.Entity<Token>()
                 .HasOne<TypeToken>()
                 .WithMany()
                 .HasForeignKey(p => p.TypeId)
-                .HasPrincipalKey(p => p.Id);
+                .HasPrincipalKey(p => p.TypeId);
 
             modelBuilder.Entity<TxTokenPlayer>()
                 .HasKey(p => p.Id);
@@ -76,9 +92,7 @@ namespace BackendToyo.Data
                 .HasKey(p => p.Id);     
 
             modelBuilder.Entity<Parts>()
-                .HasKey(p => p.Id);     
-
-
+                .HasKey(p => p.Id);
         }
     }
 }

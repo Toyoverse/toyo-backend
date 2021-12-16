@@ -1,0 +1,72 @@
+porcentage
+1,14
+Atributo old
+79
+Atributo new
+90
+porcentage
+1,14
+Atributo old
+20
+Atributo new
+23
+porcentage
+1,14
+Atributo old
+19
+Atributo new
+22
+porcentage
+1,14
+Atributo old
+16
+Atributo new
+18
+porcentage
+1,14
+Atributo old
+46
+Atributo new
+52
+porcentage
+1,14
+Atributo old
+21
+Atributo new
+24
+porcentage
+1,14
+Atributo old
+87
+Atributo new
+99
+porcentage
+1,14
+Atributo old
+64
+Atributo new
+73
+porcentage
+1,14
+Atributo old
+92
+Atributo new
+105
+porcentage
+1,14
+Atributo old
+112
+Atributo new
+128
+porcentage
+1,14
+Atributo old
+51
+Atributo new
+58
+porcentage
+1,14
+Atributo old
+120
+Atributo new
+137

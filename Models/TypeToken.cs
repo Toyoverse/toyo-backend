@@ -4,9 +4,9 @@ namespace BackendToyo.Models
 {
     public class TypeToken
     {
-        public Guid Id { get; set; }
+        public int TypeId { get; set; }
+        public string ChainId { get; set; }
         public string Name { get; set; }
-        public string MetaDataUrl { get; set; }
-        public Int64 TypeId { get; set; }
+        public string Type { get; set; }
     }
 }

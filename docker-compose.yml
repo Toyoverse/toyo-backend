@@ -3,6 +3,8 @@ services:
   backend-toyo:
     build: .
     command: sh -c "./home/scriptDocker.sh"
+    volumes:
+      - /tmp/toyoverse:/tmp/toyoverse
     ports:
       - "80:80"
       - "443:443"

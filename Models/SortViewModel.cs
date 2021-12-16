@@ -6,5 +6,6 @@ namespace BackendToyo.Models
         public int[] qStats  { get; set; }
         public int toyoRaridade { get; set; }
         public int raridade { get; set; }
+        public int toyoId { get; set; }
     }
 }
