@@ -168,7 +168,7 @@ namespace BackendToyo.Controllers
                     float newValue = Convert.ToInt32(attributes[i].value) * porcentageBonus[_bonus];
                     Console.WriteLine("Atributo old");
                     Console.WriteLine(attributes[i].value);
-                    attributes[i].value = Math.Round(newValue).ToString();
+                    attributes[i].value = Convert.ToInt32(newValue).ToString();
                     Console.WriteLine("Atributo new");
                     Console.WriteLine(attributes[i].value);
                 }
