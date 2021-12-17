@@ -107,29 +107,29 @@ namespace BackendToyo.Controllers
             var toyoReturn = await queryToyo.ToListAsync();   
 
             List<AttributesJson> attributes = new List<AttributesJson> {
-                new AttributesJson { displayType = "number", traitType = "Type", value = "9" },
-                new AttributesJson { displayType = "string", traitType = "Toyo", value = toyoReturn[0].Name },
-                new AttributesJson { displayType = "string", traitType = "Region", value = toyoReturn[0].Region },
-                new AttributesJson { displayType = "string", traitType = "Rarity", value = (toyoRaffle.raridade == 1 ? "Common Edition" : (toyoRaffle.raridade == 2 ? "Uncommon Edition" : (toyoRaffle.raridade == 3 ? "Rare Edition" : (toyoRaffle.raridade == 4 ? "limited Edition" : (toyoRaffle.raridade == 5 ? "Collectors Edition" : "Prototype Edition" ))))) },
-                new AttributesJson { displayType = "number", traitType = "Vitality", value = toyoRaffle.qStats[1].ToString() },
-                new AttributesJson { displayType = "number", traitType = "Strength", value = toyoRaffle.qStats[2].ToString() },
-                new AttributesJson { displayType = "number", traitType = "Resistance", value = toyoRaffle.qStats[3].ToString() },
-                new AttributesJson { displayType = "number", traitType = "CyberForce", value = toyoRaffle.qStats[4].ToString() },
-                new AttributesJson { displayType = "number", traitType = "Resilience", value = toyoRaffle.qStats[5].ToString() },
-                new AttributesJson { displayType = "number", traitType = "Precision", value = toyoRaffle.qStats[6].ToString() },
-                new AttributesJson { displayType = "number", traitType = "Technique", value = toyoRaffle.qStats[7].ToString() },
-                new AttributesJson { displayType = "number", traitType = "Analysis", value = toyoRaffle.qStats[8].ToString() },
-                new AttributesJson { displayType = "number", traitType = "Speed", value = toyoRaffle.qStats[9].ToString() },
-                new AttributesJson { displayType = "number", traitType = "Agility", value = toyoRaffle.qStats[10].ToString() },
-                new AttributesJson { displayType = "number", traitType = "Stamina", value = toyoRaffle.qStats[11].ToString() },
-                new AttributesJson { displayType = "number", traitType = "Luck", value = toyoRaffle.qStats[12].ToString() }
+                new AttributesJson { display_type = "number", trait_type = "Type", value = "9" },
+                new AttributesJson { display_type = "string", trait_type = "Toyo", value = toyoReturn[0].Name },
+                new AttributesJson { display_type = "string", trait_type = "Region", value = toyoReturn[0].Region },
+                new AttributesJson { display_type = "string", trait_type = "Rarity", value = (toyoRaffle.raridade == 1 ? "Common Edition" : (toyoRaffle.raridade == 2 ? "Uncommon Edition" : (toyoRaffle.raridade == 3 ? "Rare Edition" : (toyoRaffle.raridade == 4 ? "limited Edition" : (toyoRaffle.raridade == 5 ? "Collectors Edition" : "Prototype Edition" ))))) },
+                new AttributesJson { display_type = "number", trait_type = "Vitality", value = toyoRaffle.qStats[1].ToString() },
+                new AttributesJson { display_type = "number", trait_type = "Strength", value = toyoRaffle.qStats[2].ToString() },
+                new AttributesJson { display_type = "number", trait_type = "Resistance", value = toyoRaffle.qStats[3].ToString() },
+                new AttributesJson { display_type = "number", trait_type = "CyberForce", value = toyoRaffle.qStats[4].ToString() },
+                new AttributesJson { display_type = "number", trait_type = "Resilience", value = toyoRaffle.qStats[5].ToString() },
+                new AttributesJson { display_type = "number", trait_type = "Precision", value = toyoRaffle.qStats[6].ToString() },
+                new AttributesJson { display_type = "number", trait_type = "Technique", value = toyoRaffle.qStats[7].ToString() },
+                new AttributesJson { display_type = "number", trait_type = "Analysis", value = toyoRaffle.qStats[8].ToString() },
+                new AttributesJson { display_type = "number", trait_type = "Speed", value = toyoRaffle.qStats[9].ToString() },
+                new AttributesJson { display_type = "number", trait_type = "Agility", value = toyoRaffle.qStats[10].ToString() },
+                new AttributesJson { display_type = "number", trait_type = "Stamina", value = toyoRaffle.qStats[11].ToString() },
+                new AttributesJson { display_type = "number", trait_type = "Luck", value = toyoRaffle.qStats[12].ToString() }
             };
 
             ToyoJson toyoJson = new ToyoJson() {
-                Name = toyoReturn[0].Name,
-                Description = toyoReturn[0].Desc,
-                Image = toyoReturn[0].Thumb,
-                AnimationUrl = toyoReturn[0].Video,
+                name = toyoReturn[0].Name,
+                description = toyoReturn[0].Desc,
+                image = toyoReturn[0].Thumb,
+                animation_url = toyoReturn[0].Video,
                 attributes = attributes.ToArray()
             };
 
@@ -168,7 +168,7 @@ namespace BackendToyo.Controllers
                     float newValue = Convert.ToInt32(attributes[i].value) * porcentageBonus[_bonus];
                     Console.WriteLine("Atributo old");
                     Console.WriteLine(attributes[i].value);
-                    attributes[i].value = Convert.ToInt32(newValue).ToString();
+                    attributes[i].value = Convert.ToInt32(Math.Floor(newValue)).ToString();
                     Console.WriteLine("Atributo new");
                     Console.WriteLine(attributes[i].value);
                 }
@@ -177,11 +177,6 @@ namespace BackendToyo.Controllers
 
                 string json = JsonSerializer.Serialize(toyoJson);
                 await System.IO.File.WriteAllTextAsync($"/tmp/toyoverse/{tokenId}.json", json);
-                //await System.IO.File.WriteAllTextAsync($"/tmp/toyoverse/1011.json", json);
-
-                /* ProcessStartInfo startInfo = new ProcessStartInfo() { FileName = "/bin/bash", Arguments = "scp ", }; 
-                Process proc = new Process() { StartInfo = startInfo, };
-                proc.Start(); */
             }
 
             return true;
