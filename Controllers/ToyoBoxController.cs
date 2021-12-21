@@ -138,6 +138,14 @@ namespace BackendToyo.Controllers
                 swapReturn = await SwapFunction(TokenId, walletAddress, chainId);
             } while(swapReturn.Count() == 0);
 
+            await saveToyoPlayer(toyoRaffle.toyoRaridade, swapReturn[0].ToTokenId, toyoRaffle.qStats[1], toyoRaffle.qStats[2], toyoRaffle.qStats[3], toyoRaffle.qStats[4], toyoRaffle.qStats[5], toyoRaffle.qStats[6], toyoRaffle.qStats[7], toyoRaffle.qStats[8], toyoRaffle.qStats[9], toyoRaffle.qStats[10], toyoRaffle.qStats[11], toyoRaffle.qStats[12], walletAddress, chainId);
+
+            for(int i = 1; i <= 10; i++) {
+                if(i != 2) {
+                    await savePartPlayer(toyoRaffle.toyoRaridade, i, swapReturn[0].ToTokenId, walletAddress, chainId, toyoRaffle.qParts[i][0], toyoRaffle.qParts[i][1]);
+                }
+            }
+            
             string json = JsonSerializer.Serialize(toyoJson);
             await System.IO.File.WriteAllTextAsync($"/tmp/toyoverse/{swapReturn[0].ToTokenId}.json", json);
             //await System.IO.File.WriteAllTextAsync($"/tmp/toyoverse/1010.json", json);
@@ -162,15 +170,9 @@ namespace BackendToyo.Controllers
                 ToyoJson toyoJson = JsonSerializer.Deserialize<ToyoJson>(jsonString);
                 AttributesJson[] attributes = toyoJson.attributes;
                 
-                for(int i = 4; i < 16; i++) {
-                    Console.WriteLine("porcentage");
-                    Console.WriteLine(porcentageBonus[_bonus]);
+                for(int i = 4; i < 16; i++) {                    
                     float newValue = Convert.ToInt32(attributes[i].value) * porcentageBonus[_bonus];
-                    Console.WriteLine("Atributo old");
-                    Console.WriteLine(attributes[i].value);
                     attributes[i].value = Convert.ToInt32(Math.Floor(newValue)).ToString();
-                    Console.WriteLine("Atributo new");
-                    Console.WriteLine(attributes[i].value);
                 }
 
                 toyoJson.attributes = attributes;
@@ -202,6 +204,65 @@ namespace BackendToyo.Controllers
                         select new SwapToyo { TransactionHash = scts.TransactionHash, ChainId = scts.ChainId, ToTokenId = scts.ToTokenId, TypeToken = tt.TypeId, Name = sctty.Name };
 
             return await query.ToListAsync();
+        }
+
+        public async Task<bool> saveToyoPlayer(int toyoId, int tokenId, int vitality, int strength, int resistance, int cyberForce, int resilience, int precision, int technique, int analysis, int speed, int agility, int stamina, int luck, string walletAddress, string chainId) {
+            var toyoPlayer = await _context.ToyosPlayer.FirstOrDefaultAsync(p => p.WalletAddress == walletAddress && p.ChainId == chainId && p.TokenId == tokenId && p.ToyoId == toyoId);
+
+            var newToyo = new ToyoPlayer{
+                    ToyoId = toyoId,
+                    TokenId = tokenId,
+                    Vitality = vitality,
+                    Strength = strength,
+                    Resistance = resistance,
+                    CyberForce = cyberForce,
+                    Resilience = resilience,
+                    Precision = precision,
+                    Technique = technique,
+                    Analysis = analysis,
+                    Speed = speed,
+                    Agility = agility,
+                    Stamina = stamina,
+                    Luck = luck,
+                    WalletAddress = walletAddress,
+                    ChainId = chainId
+                };
+
+            if (toyoPlayer == null)
+            {
+                _context.ToyosPlayer.Add(newToyo);
+            } else {
+                toyoPlayer = newToyo;
+            }
+            
+            await _context.SaveChangesAsync();
+            
+            return true;
+        }
+
+        public async Task<bool> savePartPlayer(int toyoId, int part, int tokenId, string walletAddress, string chainId, int statId, int bonusStat) {
+            var partFind = await _context.Parts.FirstOrDefaultAsync(p => p.TorsoId == toyoId && p.Part == part);
+            var partPlayer = await _context.PartsPlayer.FirstOrDefaultAsync(p => p.WalletAddress == walletAddress && p.ChainId == chainId && p.TokenId == tokenId && p.PartId == partFind.Id);
+            
+            var newPart = new PartPlayer {
+                    PartId = partFind.Id,
+                    StatId = statId,
+                    BonusStat = bonusStat,
+                    TokenId = tokenId,
+                    WalletAddress = walletAddress,
+                    ChainId = chainId 
+                };
+
+            if (partPlayer == null)
+            {
+                _context.PartsPlayer.Add(newPart);
+            } else {
+                partPlayer = newPart;
+            }
+            
+            await _context.SaveChangesAsync();
+            
+            return true;
         }
     }
 }

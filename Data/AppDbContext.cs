@@ -16,6 +16,11 @@ namespace BackendToyo.Data
         public DbSet<Event> Events { get; set; }
         public DbSet<Player> Players { get; set; }
         public DbSet<TxTokenPlayer> TxsTokenPlayer { get; set; }
+        public DbSet<Stat> Stats { get; set; }
+        public DbSet<Parts> Parts { get; set; }
+        public DbSet<Toyo> Toyos { get; set; }
+        public DbSet<ToyoPlayer> ToyosPlayer { get; set; }
+        public DbSet<PartPlayer> PartsPlayer { get; set; }
         public DbSet<SmartContractToyoMint> SmartContractToyoMints { get; set; }
         public DbSet<SmartContractToyoSync> SmartContractToyoSyncs { get; set; }
         public DbSet<SmartContractToyoTransfer> SmartContractToyoTransfers { get; set; }
@@ -90,9 +95,59 @@ namespace BackendToyo.Data
 
             modelBuilder.Entity<Toyo>()
                 .HasKey(p => p.Id);     
+            
+            modelBuilder.Entity<Stat>()
+                .HasKey(p => p.Id);
+
+            modelBuilder.Entity<Stat>().HasData(
+                new { Id = 1, Name = "Vitality" },
+                new { Id = 2, Name = "Strength" },
+                new { Id = 3, Name = "Resistance" },
+                new { Id = 4, Name = "CyberForce" },
+                new { Id = 5, Name = "Resilience" },
+                new { Id = 6, Name = "Precision" },
+                new { Id = 7, Name = "Technique" },
+                new { Id = 8, Name = "Analysis" },
+                new { Id = 9, Name = "Speed" },
+                new { Id = 10, Name = "Agility" },
+                new { Id = 11, Name = "Stamina" },
+                new { Id = 12, Name = "Luck" }
+            );
 
             modelBuilder.Entity<Parts>()
                 .HasKey(p => p.Id);
+
+            modelBuilder.Entity<PartPlayer>()
+                .HasKey(p => p.Id);
+
+            modelBuilder.Entity<PartPlayer>()
+                .Property(p => p.Id)
+                .ValueGeneratedOnAdd();
+
+            modelBuilder.Entity<PartPlayer>()
+                .HasOne<Parts>()
+                .WithMany()
+                .HasForeignKey(p => p.PartId)
+                .HasPrincipalKey(p => p.Id);
+
+            modelBuilder.Entity<PartPlayer>()
+                .HasOne<Stat>()
+                .WithMany()
+                .HasForeignKey(p => p.StatId)
+                .HasPrincipalKey(p => p.Id);
+
+            modelBuilder.Entity<ToyoPlayer>()
+                .HasKey(p => p.Id);
+
+            modelBuilder.Entity<ToyoPlayer>()
+                .Property(p => p.Id)
+                .ValueGeneratedOnAdd();
+
+            modelBuilder.Entity<ToyoPlayer>()
+                .HasOne<Toyo>()
+                .WithMany()
+                .HasForeignKey(p => p.ToyoId)
+                .HasPrincipalKey(p => p.Id);
         }
     }
 }

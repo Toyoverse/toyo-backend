@@ -1,10 +1,7 @@
 namespace BackendToyo.Models
 {
-    public class ToyoPlayer
+    public class Stats
     {
-        public int Id { get; set; } 
-        public int ToyoId { get; set; }
-        public int TokenId { get; set; }
         public int Vitality { get; set; }
         public int Strength { get; set; }
         public int Resistance { get; set; }
@@ -17,7 +14,12 @@ namespace BackendToyo.Models
         public int Agility { get; set; }
         public int Stamina { get; set; }
         public int Luck { get; set; }
-        public string WalletAddress { get; set; }
-        public string ChainId { get; set; }
+    }
+
+     public class Stat
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
     }
 }
