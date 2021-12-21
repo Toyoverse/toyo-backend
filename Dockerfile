@@ -11,6 +11,8 @@ RUN cd /home/full-backend && \
     chmod +x scriptDocker.sh && \
     mv scriptDocker.sh /home/
 
+RUN mkdir /tmp/toyoverse
+
 RUN dotnet dev-certs https --trust
 
 ENV ASPNETCORE_URLS=https://+

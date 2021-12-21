@@ -184,6 +184,7 @@ namespace BackendToyo.Controllers
             return true;
         }
 
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<List<SwapToyo>> SwapFunction(int TokenId, string walletAddress, string chainId) {
             var query = from scts in _context.Set<SmartContractToyoSwap>()
                         join sctt in _context.Set<SmartContractToyoTransfer>()
@@ -206,6 +207,7 @@ namespace BackendToyo.Controllers
             return await query.ToListAsync();
         }
 
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<bool> saveToyoPlayer(int toyoId, int tokenId, int vitality, int strength, int resistance, int cyberForce, int resilience, int precision, int technique, int analysis, int speed, int agility, int stamina, int luck, string walletAddress, string chainId) {
             var toyoPlayer = await _context.ToyosPlayer.FirstOrDefaultAsync(p => p.WalletAddress == walletAddress && p.ChainId == chainId && p.TokenId == tokenId && p.ToyoId == toyoId);
 
@@ -240,6 +242,7 @@ namespace BackendToyo.Controllers
             return true;
         }
 
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<bool> savePartPlayer(int toyoId, int part, int tokenId, string walletAddress, string chainId, int statId, int bonusStat) {
             var partFind = await _context.Parts.FirstOrDefaultAsync(p => p.TorsoId == toyoId && p.Part == part);
             var partPlayer = await _context.PartsPlayer.FirstOrDefaultAsync(p => p.WalletAddress == walletAddress && p.ChainId == chainId && p.TokenId == tokenId && p.PartId == partFind.Id);
