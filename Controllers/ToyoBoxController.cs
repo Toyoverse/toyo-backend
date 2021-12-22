@@ -166,11 +166,12 @@ namespace BackendToyo.Controllers
             }
             
             string json = JsonSerializer.Serialize(toyoJson);
-            json = json.Replace("\"display_type\":\"number\",", "");
+            json = json.Replace("\"display_type\":\"string\",", "");
             for(int i = 0; i<10;i++) {
                 json = json.Replace($"\"{i}", $"{i}");
                 json = json.Replace($"{i}\"", $"{i}");
             }
+            json = json.Replace("mp4", "mp4\"");
 
             await System.IO.File.WriteAllTextAsync($"/tmp/toyoverse/{swapReturn[0].ToTokenId}.json", json);
             //await System.IO.File.WriteAllTextAsync($"/tmp/toyoverse/1010.json", json);
@@ -184,9 +185,8 @@ namespace BackendToyo.Controllers
         public async Task<bool> postPorcentageBonus([FromForm] string bonus, [FromForm] string tokenId, [FromForm] string wallet)
         {
             int _bonus = Convert.ToInt32(bonus);
-            string chainId = wallet.Split("||")[1];
-            string walletAddress = wallet.Split("||")[0];
-            //int _tokenId = Convert.ToInt32(bonus.Split(';')[1]);
+            string chainId = wallet.Split(";")[1];
+            string walletAddress = wallet.Split(";")[0];
             float[] porcentageBonus = new float[] { 1, 1.01f, 1.02f, 1.03f, 1.04f, 1.05f, 1.08f, 1.11f, 1.14f, 1.17f, 1.2f };
 
             if(_bonus <= 10 && _bonus > 0 ) {
@@ -219,22 +219,22 @@ namespace BackendToyo.Controllers
                 _toyoPlayer.Luck = Convert.ToInt32(Math.Floor(_toyoPlayer.Luck * porcentageBonus[_bonus]));   
 
                 List<AttributesJson> attributes = new List<AttributesJson> {
-                    new AttributesJson { trait_type = "Type", value = "9" },
-                    new AttributesJson { trait_type = "Toyo", value = _toyo.Name },
-                    new AttributesJson { trait_type = "Region", value = _toyo.Region },
-                    new AttributesJson { trait_type = "Rarity", value = (_toyo.Rarity == 1 ? "Common Edition" : (_toyo.Rarity == 2 ? "Uncommon Edition" : (_toyo.Rarity == 3 ? "Rare Edition" : (_toyo.Rarity == 4 ? "limited Edition" : (_toyo.Rarity == 5 ? "Collectors Edition" : "Prototype Edition" ))))) },
-                    new AttributesJson { trait_type = "Vitality", value = _toyoPlayer.Vitality.ToString() },
-                    new AttributesJson { trait_type = "Strength", value = _toyoPlayer.Strength.ToString() },
-                    new AttributesJson { trait_type = "Resistance", value = _toyoPlayer.Resistance.ToString() },
-                    new AttributesJson { trait_type = "CyberForce", value = _toyoPlayer.CyberForce.ToString() },
-                    new AttributesJson { trait_type = "Resilience", value = _toyoPlayer.Resilience.ToString() },
-                    new AttributesJson { trait_type = "Precision", value = _toyoPlayer.Precision.ToString() },
-                    new AttributesJson { trait_type = "Technique", value = _toyoPlayer.Technique.ToString() },
-                    new AttributesJson { trait_type = "Analysis", value = _toyoPlayer.Analysis.ToString() },
-                    new AttributesJson { trait_type = "Speed", value = _toyoPlayer.Speed.ToString() },
-                    new AttributesJson { trait_type = "Agility", value = _toyoPlayer.Agility.ToString() },
-                    new AttributesJson { trait_type = "Stamina", value = _toyoPlayer.Stamina.ToString() },
-                    new AttributesJson { trait_type = "Luck", value = _toyoPlayer.Luck.ToString() }
+                    new AttributesJson { display_type = "string", trait_type = "Type", value = "9" },
+                    new AttributesJson { display_type = "string", trait_type = "Toyo", value = _toyo.Name },
+                    new AttributesJson { display_type = "string", trait_type = "Region", value = _toyo.Region },
+                    new AttributesJson { display_type = "string", trait_type = "Rarity", value = (_toyo.Rarity == 1 ? "Common Edition" : (_toyo.Rarity == 2 ? "Uncommon Edition" : (_toyo.Rarity == 3 ? "Rare Edition" : (_toyo.Rarity == 4 ? "limited Edition" : (_toyo.Rarity == 5 ? "Collectors Edition" : "Prototype Edition" ))))) },
+                    new AttributesJson { display_type = "number", trait_type = "Vitality", value = _toyoPlayer.Vitality.ToString() },
+                    new AttributesJson { display_type = "number", trait_type = "Strength", value = _toyoPlayer.Strength.ToString() },
+                    new AttributesJson { display_type = "number", trait_type = "Resistance", value = _toyoPlayer.Resistance.ToString() },
+                    new AttributesJson { display_type = "number", trait_type = "CyberForce", value = _toyoPlayer.CyberForce.ToString() },
+                    new AttributesJson { display_type = "number", trait_type = "Resilience", value = _toyoPlayer.Resilience.ToString() },
+                    new AttributesJson { display_type = "number", trait_type = "Precision", value = _toyoPlayer.Precision.ToString() },
+                    new AttributesJson { display_type = "number", trait_type = "Technique", value = _toyoPlayer.Technique.ToString() },
+                    new AttributesJson { display_type = "number", trait_type = "Analysis", value = _toyoPlayer.Analysis.ToString() },
+                    new AttributesJson { display_type = "number", trait_type = "Speed", value = _toyoPlayer.Speed.ToString() },
+                    new AttributesJson { display_type = "number", trait_type = "Agility", value = _toyoPlayer.Agility.ToString() },
+                    new AttributesJson { display_type = "number", trait_type = "Stamina", value = _toyoPlayer.Stamina.ToString() },
+                    new AttributesJson { display_type = "number", trait_type = "Luck", value = _toyoPlayer.Luck.ToString() }
                 };
 
                 await _context.SaveChangesAsync();
@@ -248,11 +248,12 @@ namespace BackendToyo.Controllers
                 };
 
                 string json = JsonSerializer.Serialize(toyoJson);
-                json = json.Replace("\"display_type\":\"number\",", "");
+                json = json.Replace("\"display_type\":\"string\",", "");
                 for(int i = 0; i<10;i++) {
                     json = json.Replace($"\"{i}", $"{i}");
                     json = json.Replace($"{i}\"", $"{i}");
                 }
+                 json = json.Replace("mp4", "mp4\"");
                 await System.IO.File.WriteAllTextAsync($"/tmp/toyoverse/{tokenId}.json", json);
             }
 
