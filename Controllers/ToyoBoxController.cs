@@ -107,22 +107,22 @@ namespace BackendToyo.Controllers
             var toyoReturn = await queryToyo.ToListAsync();   
 
             List<AttributesJson> attributes = new List<AttributesJson> {
-                new AttributesJson { trait_type = "Type", value = "9" },
-                new AttributesJson { trait_type = "Toyo", value = toyoReturn[0].Name },
-                new AttributesJson { trait_type = "Region", value = toyoReturn[0].Region },
-                new AttributesJson { trait_type = "Rarity", value = (toyoRaffle.raridade == 1 ? "Common Edition" : (toyoRaffle.raridade == 2 ? "Uncommon Edition" : (toyoRaffle.raridade == 3 ? "Rare Edition" : (toyoRaffle.raridade == 4 ? "limited Edition" : (toyoRaffle.raridade == 5 ? "Collectors Edition" : "Prototype Edition" ))))) },
-                new AttributesJson { trait_type = "Vitality", value = toyoRaffle.qStats[1].ToString() },
-                new AttributesJson { trait_type = "Strength", value = toyoRaffle.qStats[2].ToString() },
-                new AttributesJson { trait_type = "Resistance", value = toyoRaffle.qStats[3].ToString() },
-                new AttributesJson { trait_type = "CyberForce", value = toyoRaffle.qStats[4].ToString() },
-                new AttributesJson { trait_type = "Resilience", value = toyoRaffle.qStats[5].ToString() },
-                new AttributesJson { trait_type = "Precision", value = toyoRaffle.qStats[6].ToString() },
-                new AttributesJson { trait_type = "Technique", value = toyoRaffle.qStats[7].ToString() },
-                new AttributesJson { trait_type = "Analysis", value = toyoRaffle.qStats[8].ToString() },
-                new AttributesJson { trait_type = "Speed", value = toyoRaffle.qStats[9].ToString() },
-                new AttributesJson { trait_type = "Agility", value = toyoRaffle.qStats[10].ToString() },
-                new AttributesJson { trait_type = "Stamina", value = toyoRaffle.qStats[11].ToString() },
-                new AttributesJson { trait_type = "Luck", value = toyoRaffle.qStats[12].ToString() }
+                new AttributesJson { display_type = "string", trait_type = "Type", value = "9" },
+                new AttributesJson { display_type = "string", trait_type = "Toyo", value = toyoReturn[0].Name },
+                new AttributesJson { display_type = "string", trait_type = "Region", value = toyoReturn[0].Region },
+                new AttributesJson { display_type = "string", trait_type = "Rarity", value = (toyoRaffle.raridade == 1 ? "Common Edition" : (toyoRaffle.raridade == 2 ? "Uncommon Edition" : (toyoRaffle.raridade == 3 ? "Rare Edition" : (toyoRaffle.raridade == 4 ? "limited Edition" : (toyoRaffle.raridade == 5 ? "Collectors Edition" : "Prototype Edition" ))))) },
+                new AttributesJson { display_type = "number", trait_type = "Vitality", value = toyoRaffle.qStats[1].ToString() },
+                new AttributesJson { display_type = "number", trait_type = "Strength", value = toyoRaffle.qStats[2].ToString() },
+                new AttributesJson { display_type = "number", trait_type = "Resistance", value = toyoRaffle.qStats[3].ToString() },
+                new AttributesJson { display_type = "number", trait_type = "CyberForce", value = toyoRaffle.qStats[4].ToString() },
+                new AttributesJson { display_type = "number", trait_type = "Resilience", value = toyoRaffle.qStats[5].ToString() },
+                new AttributesJson { display_type = "number", trait_type = "Precision", value = toyoRaffle.qStats[6].ToString() },
+                new AttributesJson { display_type = "number", trait_type = "Technique", value = toyoRaffle.qStats[7].ToString() },
+                new AttributesJson { display_type = "number", trait_type = "Analysis", value = toyoRaffle.qStats[8].ToString() },
+                new AttributesJson { display_type = "number", trait_type = "Speed", value = toyoRaffle.qStats[9].ToString() },
+                new AttributesJson { display_type = "number", trait_type = "Agility", value = toyoRaffle.qStats[10].ToString() },
+                new AttributesJson { display_type = "number", trait_type = "Stamina", value = toyoRaffle.qStats[11].ToString() },
+                new AttributesJson { display_type = "number", trait_type = "Luck", value = toyoRaffle.qStats[12].ToString() }
             };
 
             ToyoJson toyoJson = new ToyoJson() {
@@ -166,6 +166,12 @@ namespace BackendToyo.Controllers
             }
             
             string json = JsonSerializer.Serialize(toyoJson);
+            json = json.Replace("\"display_type\":\"number\",", "");
+            for(int i = 0; i<10;i++) {
+                json = json.Replace($"\"{i}", $"{i}");
+                json = json.Replace($"{i}\"", $"{i}");
+            }
+
             await System.IO.File.WriteAllTextAsync($"/tmp/toyoverse/{swapReturn[0].ToTokenId}.json", json);
             //await System.IO.File.WriteAllTextAsync($"/tmp/toyoverse/1010.json", json);
 
@@ -242,6 +248,11 @@ namespace BackendToyo.Controllers
                 };
 
                 string json = JsonSerializer.Serialize(toyoJson);
+                json = json.Replace("\"display_type\":\"number\",", "");
+                for(int i = 0; i<10;i++) {
+                    json = json.Replace($"\"{i}", $"{i}");
+                    json = json.Replace($"{i}\"", $"{i}");
+                }
                 await System.IO.File.WriteAllTextAsync($"/tmp/toyoverse/{tokenId}.json", json);
             }
 
