@@ -19,5 +19,6 @@ namespace BackendToyo.Models
         public int Luck { get; set; }
         public string WalletAddress { get; set; }
         public string ChainId { get; set; }
+        public bool ChangeValue { get; set; }
     }
 }

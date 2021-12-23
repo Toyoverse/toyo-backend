@@ -154,7 +154,8 @@ namespace BackendToyo.Controllers
                 Stamina = toyoRaffle.qStats[11],
                 Luck = toyoRaffle.qStats[12],
                 WalletAddress = walletAddress,
-                ChainId = chainId
+                ChainId = chainId,
+                ChangeValue = false
             };
 
             await saveToyoPlayer(_toyoPlayer);
@@ -182,79 +183,91 @@ namespace BackendToyo.Controllers
         }
 
         [HttpPost("postPercentageBonus")]
-        public async Task<bool> postPorcentageBonus([FromForm] string bonus, [FromForm] string tokenId, [FromForm] string wallet)
+        public async Task<bool> postPorcentageBonus(string Ym9udXM, string dG9rZW5JZA, string wallet)
         {
-            int _bonus = Convert.ToInt32(bonus);
+            Console.WriteLine("MARS >>>> ENTROU");
+            int _bonusCode = Convert.ToInt32(base64DecodeEncode.Base64Decode(Ym9udXM));
+            string tokenId = base64DecodeEncode.Base64Decode(dG9rZW5JZA);
             string chainId = wallet.Split(";")[1];
             string walletAddress = wallet.Split(";")[0];
             float[] porcentageBonus = new float[] { 1, 1.01f, 1.02f, 1.03f, 1.04f, 1.05f, 1.08f, 1.11f, 1.14f, 1.17f, 1.2f };
 
-            if(_bonus <= 10 && _bonus > 0 ) {
-                ToyoPlayer _toyoPlayer = new ToyoPlayer(); 
-                Toyo _toyo = new Toyo();                
-                        
-                var queryToyoPlayer = from toyoPlayer in _context.Set<ToyoPlayer>()
-                                            where toyoPlayer.TokenId == Convert.ToInt32(tokenId) && toyoPlayer.WalletAddress == walletAddress && toyoPlayer.ChainId == chainId 
-                                            select toyoPlayer;
+            int[] numBase = new int[] { 0, 582, 49751, 67412, 714, 65852, 4414, 8857445, 5114514, 222541, 6367 };
 
-                _toyoPlayer = await queryToyoPlayer.FirstOrDefaultAsync();
+            ToyoPlayer _toyoPlayer = new ToyoPlayer(); 
+            Toyo _toyo = new Toyo();
+                    
+            var queryToyoPlayer = from toyoPlayer in _context.Set<ToyoPlayer>()
+                                        where toyoPlayer.TokenId == Convert.ToInt32(tokenId) && toyoPlayer.WalletAddress == walletAddress && toyoPlayer.ChainId == chainId 
+                                        select toyoPlayer;
 
-                 var queryToyo = from toyo in _context.Set<Toyo>()
-                                            where toyo.Id == _toyoPlayer.ToyoId
-                                            select toyo;
+            _toyoPlayer = await queryToyoPlayer.FirstOrDefaultAsync();
+            Console.WriteLine("MARS >>>> CHANGE VALUE {0}", _toyoPlayer.ChangeValue);
+            if (_toyoPlayer.ChangeValue == false) {
+                Console.WriteLine("MARS >>>> ENTROU IF");
 
-                _toyo = await queryToyo.FirstOrDefaultAsync();
+                int _bonus = Array.IndexOf(numBase, _bonusCode);
+                Console.WriteLine("MARS >>>> PEGOU BONUS {0}", _bonus);
+                if(_bonus <= 10 && _bonus > 0 ) {
+                    Console.WriteLine("MARS >>>> ENTROU BONUS");
+                    var queryToyo = from toyo in _context.Set<Toyo>()
+                                                where toyo.Id == _toyoPlayer.ToyoId
+                                                select toyo;
 
-                _toyoPlayer.Vitality = Convert.ToInt32(Math.Floor(_toyoPlayer.Vitality * porcentageBonus[_bonus]));  
-                _toyoPlayer.Strength = Convert.ToInt32(Math.Floor(_toyoPlayer.Strength * porcentageBonus[_bonus]));  
-                _toyoPlayer.Resistance = Convert.ToInt32(Math.Floor(_toyoPlayer.Resistance * porcentageBonus[_bonus]));  
-                _toyoPlayer.CyberForce = Convert.ToInt32(Math.Floor(_toyoPlayer.CyberForce * porcentageBonus[_bonus]));  
-                _toyoPlayer.Resilience = Convert.ToInt32(Math.Floor(_toyoPlayer.Resilience * porcentageBonus[_bonus]));  
-                _toyoPlayer.Precision = Convert.ToInt32(Math.Floor(_toyoPlayer.Precision * porcentageBonus[_bonus]));  
-                _toyoPlayer.Technique = Convert.ToInt32(Math.Floor(_toyoPlayer.Technique * porcentageBonus[_bonus]));  
-                _toyoPlayer.Analysis = Convert.ToInt32(Math.Floor(_toyoPlayer.Analysis * porcentageBonus[_bonus]));  
-                _toyoPlayer.Speed = Convert.ToInt32(Math.Floor(_toyoPlayer.Speed * porcentageBonus[_bonus]));  
-                _toyoPlayer.Agility = Convert.ToInt32(Math.Floor(_toyoPlayer.Agility * porcentageBonus[_bonus]));  
-                _toyoPlayer.Stamina = Convert.ToInt32(Math.Floor(_toyoPlayer.Stamina * porcentageBonus[_bonus]));  
-                _toyoPlayer.Luck = Convert.ToInt32(Math.Floor(_toyoPlayer.Luck * porcentageBonus[_bonus]));   
+                    _toyo = await queryToyo.FirstOrDefaultAsync();
 
-                List<AttributesJson> attributes = new List<AttributesJson> {
-                    new AttributesJson { display_type = "string", trait_type = "Type", value = "9" },
-                    new AttributesJson { display_type = "string", trait_type = "Toyo", value = _toyo.Name },
-                    new AttributesJson { display_type = "string", trait_type = "Region", value = _toyo.Region },
-                    new AttributesJson { display_type = "string", trait_type = "Rarity", value = (_toyo.Rarity == 1 ? "Common Edition" : (_toyo.Rarity == 2 ? "Uncommon Edition" : (_toyo.Rarity == 3 ? "Rare Edition" : (_toyo.Rarity == 4 ? "limited Edition" : (_toyo.Rarity == 5 ? "Collectors Edition" : "Prototype Edition" ))))) },
-                    new AttributesJson { display_type = "number", trait_type = "Vitality", value = _toyoPlayer.Vitality.ToString() },
-                    new AttributesJson { display_type = "number", trait_type = "Strength", value = _toyoPlayer.Strength.ToString() },
-                    new AttributesJson { display_type = "number", trait_type = "Resistance", value = _toyoPlayer.Resistance.ToString() },
-                    new AttributesJson { display_type = "number", trait_type = "CyberForce", value = _toyoPlayer.CyberForce.ToString() },
-                    new AttributesJson { display_type = "number", trait_type = "Resilience", value = _toyoPlayer.Resilience.ToString() },
-                    new AttributesJson { display_type = "number", trait_type = "Precision", value = _toyoPlayer.Precision.ToString() },
-                    new AttributesJson { display_type = "number", trait_type = "Technique", value = _toyoPlayer.Technique.ToString() },
-                    new AttributesJson { display_type = "number", trait_type = "Analysis", value = _toyoPlayer.Analysis.ToString() },
-                    new AttributesJson { display_type = "number", trait_type = "Speed", value = _toyoPlayer.Speed.ToString() },
-                    new AttributesJson { display_type = "number", trait_type = "Agility", value = _toyoPlayer.Agility.ToString() },
-                    new AttributesJson { display_type = "number", trait_type = "Stamina", value = _toyoPlayer.Stamina.ToString() },
-                    new AttributesJson { display_type = "number", trait_type = "Luck", value = _toyoPlayer.Luck.ToString() }
-                };
+                    _toyoPlayer.Vitality = Convert.ToInt32(Math.Floor(_toyoPlayer.Vitality * porcentageBonus[_bonus]));  
+                    _toyoPlayer.Strength = Convert.ToInt32(Math.Floor(_toyoPlayer.Strength * porcentageBonus[_bonus]));  
+                    _toyoPlayer.Resistance = Convert.ToInt32(Math.Floor(_toyoPlayer.Resistance * porcentageBonus[_bonus]));  
+                    _toyoPlayer.CyberForce = Convert.ToInt32(Math.Floor(_toyoPlayer.CyberForce * porcentageBonus[_bonus]));  
+                    _toyoPlayer.Resilience = Convert.ToInt32(Math.Floor(_toyoPlayer.Resilience * porcentageBonus[_bonus]));  
+                    _toyoPlayer.Precision = Convert.ToInt32(Math.Floor(_toyoPlayer.Precision * porcentageBonus[_bonus]));  
+                    _toyoPlayer.Technique = Convert.ToInt32(Math.Floor(_toyoPlayer.Technique * porcentageBonus[_bonus]));  
+                    _toyoPlayer.Analysis = Convert.ToInt32(Math.Floor(_toyoPlayer.Analysis * porcentageBonus[_bonus]));  
+                    _toyoPlayer.Speed = Convert.ToInt32(Math.Floor(_toyoPlayer.Speed * porcentageBonus[_bonus]));  
+                    _toyoPlayer.Agility = Convert.ToInt32(Math.Floor(_toyoPlayer.Agility * porcentageBonus[_bonus]));  
+                    _toyoPlayer.Stamina = Convert.ToInt32(Math.Floor(_toyoPlayer.Stamina * porcentageBonus[_bonus]));  
+                    _toyoPlayer.Luck = Convert.ToInt32(Math.Floor(_toyoPlayer.Luck * porcentageBonus[_bonus]));   
+                    _toyoPlayer.ChangeValue = true;
 
-                await _context.SaveChangesAsync();
+                    List<AttributesJson> attributes = new List<AttributesJson> {
+                        new AttributesJson { display_type = "string", trait_type = "Type", value = "9" },
+                        new AttributesJson { display_type = "string", trait_type = "Toyo", value = _toyo.Name },
+                        new AttributesJson { display_type = "string", trait_type = "Region", value = _toyo.Region },
+                        new AttributesJson { display_type = "string", trait_type = "Rarity", value = (_toyo.Rarity == 1 ? "Common Edition" : (_toyo.Rarity == 2 ? "Uncommon Edition" : (_toyo.Rarity == 3 ? "Rare Edition" : (_toyo.Rarity == 4 ? "limited Edition" : (_toyo.Rarity == 5 ? "Collectors Edition" : "Prototype Edition" ))))) },
+                        new AttributesJson { display_type = "number", trait_type = "Vitality", value = _toyoPlayer.Vitality.ToString() },
+                        new AttributesJson { display_type = "number", trait_type = "Strength", value = _toyoPlayer.Strength.ToString() },
+                        new AttributesJson { display_type = "number", trait_type = "Resistance", value = _toyoPlayer.Resistance.ToString() },
+                        new AttributesJson { display_type = "number", trait_type = "CyberForce", value = _toyoPlayer.CyberForce.ToString() },
+                        new AttributesJson { display_type = "number", trait_type = "Resilience", value = _toyoPlayer.Resilience.ToString() },
+                        new AttributesJson { display_type = "number", trait_type = "Precision", value = _toyoPlayer.Precision.ToString() },
+                        new AttributesJson { display_type = "number", trait_type = "Technique", value = _toyoPlayer.Technique.ToString() },
+                        new AttributesJson { display_type = "number", trait_type = "Analysis", value = _toyoPlayer.Analysis.ToString() },
+                        new AttributesJson { display_type = "number", trait_type = "Speed", value = _toyoPlayer.Speed.ToString() },
+                        new AttributesJson { display_type = "number", trait_type = "Agility", value = _toyoPlayer.Agility.ToString() },
+                        new AttributesJson { display_type = "number", trait_type = "Stamina", value = _toyoPlayer.Stamina.ToString() },
+                        new AttributesJson { display_type = "number", trait_type = "Luck", value = _toyoPlayer.Luck.ToString() }
+                    };
 
-                ToyoJson toyoJson = new ToyoJson() {
-                    name =_toyo.Name,
-                    description = _toyo.Desc,
-                    image = _toyo.Thumb,
-                    animation_url = _toyo.Video,
-                    attributes = attributes.ToArray()
-                };
+                    await _context.SaveChangesAsync();
 
-                string json = JsonSerializer.Serialize(toyoJson);
-                json = json.Replace("\"display_type\":\"string\",", "");
-                for(int i = 0; i<10;i++) {
-                    json = json.Replace($"\"{i}", $"{i}");
-                    json = json.Replace($"{i}\"", $"{i}");
+                    ToyoJson toyoJson = new ToyoJson() {
+                        name =_toyo.Name,
+                        description = _toyo.Desc,
+                        image = _toyo.Thumb,
+                        animation_url = _toyo.Video,
+                        attributes = attributes.ToArray()
+                    };
+
+                    string json = JsonSerializer.Serialize(toyoJson);
+                    json = json.Replace("\"display_type\":\"string\",", "");
+                    for(int i = 0; i<10;i++) {
+                        json = json.Replace($"\"{i}", $"{i}");
+                        json = json.Replace($"{i}\"", $"{i}");
+                    }
+                    json = json.Replace("mp4", "mp4\"");
+                    await System.IO.File.WriteAllTextAsync($"/tmp/toyoverse/{tokenId}.json", json);
                 }
-                 json = json.Replace("mp4", "mp4\"");
-                await System.IO.File.WriteAllTextAsync($"/tmp/toyoverse/{tokenId}.json", json);
             }
 
             return true;
