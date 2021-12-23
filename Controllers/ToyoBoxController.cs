@@ -183,13 +183,12 @@ namespace BackendToyo.Controllers
         }
 
         [HttpPost("postPercentageBonus")]
-        public async Task<bool> postPorcentageBonus(string Ym9udXM, string dG9rZW5JZA, string wallet)
-        {
-            Console.WriteLine("MARS >>>> ENTROU");
-            int _bonusCode = Convert.ToInt32(base64DecodeEncode.Base64Decode(Ym9udXM));
-            string tokenId = base64DecodeEncode.Base64Decode(dG9rZW5JZA);
-            string chainId = wallet.Split(";")[1];
-            string walletAddress = wallet.Split(";")[0];
+        public async Task<bool> postPorcentageBonus(PorcentageBonusView porcentageBonusView)
+        {           
+            int _bonusCode = Convert.ToInt32(base64DecodeEncode.Base64Decode(porcentageBonusView.Ym9udXM));
+            string tokenId = base64DecodeEncode.Base64Decode(porcentageBonusView.dG9rZW5JZA);
+            string chainId = porcentageBonusView.wallet.Split(";")[1];
+            string walletAddress = porcentageBonusView.wallet.Split(";")[0];
             float[] porcentageBonus = new float[] { 1, 1.01f, 1.02f, 1.03f, 1.04f, 1.05f, 1.08f, 1.11f, 1.14f, 1.17f, 1.2f };
 
             int[] numBase = new int[] { 0, 582, 49751, 67412, 714, 65852, 4414, 8857445, 5114514, 222541, 6367 };
@@ -202,14 +201,14 @@ namespace BackendToyo.Controllers
                                         select toyoPlayer;
 
             _toyoPlayer = await queryToyoPlayer.FirstOrDefaultAsync();
-            Console.WriteLine("MARS >>>> CHANGE VALUE {0}", _toyoPlayer.ChangeValue);
+            
             if (_toyoPlayer.ChangeValue == false) {
-                Console.WriteLine("MARS >>>> ENTROU IF");
+                
 
                 int _bonus = Array.IndexOf(numBase, _bonusCode);
-                Console.WriteLine("MARS >>>> PEGOU BONUS {0}", _bonus);
+                
                 if(_bonus <= 10 && _bonus > 0 ) {
-                    Console.WriteLine("MARS >>>> ENTROU BONUS");
+                    
                     var queryToyo = from toyo in _context.Set<Toyo>()
                                                 where toyo.Id == _toyoPlayer.ToyoId
                                                 select toyo;
