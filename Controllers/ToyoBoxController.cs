@@ -97,6 +97,9 @@ namespace BackendToyo.Controllers
         [HttpGet("sortBox")]
         public async Task<ActionResult<SortViewModel>> sortBox(int TypeId, int TokenId, string walletAddress, string chainId, bool Fortified = false)
         {
+            Console.WriteLine("TokenId - Sorteio: {0}", TokenId);
+            Console.WriteLine("WalletAddress - Sorteio: {0}", walletAddress);
+
             SortViewModel toyoRaffle = new SortViewModel();
             toyoRaffle = raffle.main(Fortified);
       
@@ -168,7 +171,7 @@ namespace BackendToyo.Controllers
 
             await System.IO.File.WriteAllTextAsync($"/tmp/toyoverse/{swapReturn[0].ToTokenId}.json", json);
             //await System.IO.File.WriteAllTextAsync($"/tmp/toyoverse/1010.json", json);
-
+            Console.WriteLine("Json Saved");
             try
             {
                 await saveToyoPlayer(_toyoPlayer);
@@ -192,6 +195,19 @@ namespace BackendToyo.Controllers
         [HttpPost("postPercentageBonus")]
         public async Task<bool> postPorcentageBonus(PorcentageBonusView porcentageBonusView)
         {           
+            try{
+                Console.WriteLine("Bonus received Code: {0}", porcentageBonusView.Ym9udXM);
+                Console.WriteLine("TokenId received Code: {0}", porcentageBonusView.dG9rZW5JZA);
+                Console.WriteLine("ChainId received: {0}", porcentageBonusView.wallet.Split(";")[1]);
+                Console.WriteLine("WalletAddress received: {0}",porcentageBonusView.wallet.Split(";")[0]);
+
+                Console.WriteLine("Bonus received Decode: {0}", base64DecodeEncode.Base64Decode(porcentageBonusView.Ym9udXM));
+                Console.WriteLine("TokenId received Decode: {0}",base64DecodeEncode.Base64Decode(porcentageBonusView.dG9rZW5JZA));
+
+            } catch (SystemException e) {
+                Console.WriteLine(e);
+            }
+
             int _bonusCode = Convert.ToInt32(base64DecodeEncode.Base64Decode(porcentageBonusView.Ym9udXM));
             string tokenId = base64DecodeEncode.Base64Decode(porcentageBonusView.dG9rZW5JZA);
             string chainId = porcentageBonusView.wallet.Split(";")[1];
@@ -270,6 +286,7 @@ namespace BackendToyo.Controllers
                         json = json.Replace($"{i}\"", $"{i}");
                     }
                     json = json.Replace("mp4", "mp4\"");
+
                     await System.IO.File.WriteAllTextAsync($"/tmp/toyoverse/{tokenId}.json", json);
                     await _context.SaveChangesAsync();
                 }
