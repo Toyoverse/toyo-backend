@@ -156,15 +156,7 @@ namespace BackendToyo.Controllers
                 WalletAddress = walletAddress,
                 ChainId = chainId,
                 ChangeValue = false
-            };
-
-            await saveToyoPlayer(_toyoPlayer);
-
-            for(int i = 1; i <= 10; i++) {
-                if(i != 2) {
-                    await savePartPlayer(toyoRaffle.toyoRaridade, i, swapReturn[0].ToTokenId, walletAddress, chainId, toyoRaffle.qParts[i][0], toyoRaffle.qParts[i][1]);
-                }
-            }
+            };            
             
             string json = JsonSerializer.Serialize(toyoJson);
             json = json.Replace("\"display_type\":\"string\",", "");
@@ -177,6 +169,21 @@ namespace BackendToyo.Controllers
             await System.IO.File.WriteAllTextAsync($"/tmp/toyoverse/{swapReturn[0].ToTokenId}.json", json);
             //await System.IO.File.WriteAllTextAsync($"/tmp/toyoverse/1010.json", json);
 
+            try
+            {
+                await saveToyoPlayer(_toyoPlayer);
+
+                for(int i = 1; i <= 10; i++) {
+                    if(i != 2) {
+                        await savePartPlayer(toyoRaffle.toyoRaridade, i, swapReturn[0].ToTokenId, walletAddress, chainId, toyoRaffle.qParts[i][0], toyoRaffle.qParts[i][1]);
+                    }
+                }
+            }
+            catch (System.Exception e)
+            {
+                Console.WriteLine(e);
+            }
+         
             toyoRaffle.toyoId = swapReturn[0].ToTokenId;
 
             return toyoRaffle;
@@ -248,8 +255,6 @@ namespace BackendToyo.Controllers
                         new AttributesJson { display_type = "number", trait_type = "Luck", value = _toyoPlayer.Luck.ToString() }
                     };
 
-                    await _context.SaveChangesAsync();
-
                     ToyoJson toyoJson = new ToyoJson() {
                         name =_toyo.Name,
                         description = _toyo.Desc,
@@ -266,6 +271,7 @@ namespace BackendToyo.Controllers
                     }
                     json = json.Replace("mp4", "mp4\"");
                     await System.IO.File.WriteAllTextAsync($"/tmp/toyoverse/{tokenId}.json", json);
+                    await _context.SaveChangesAsync();
                 }
             }
 

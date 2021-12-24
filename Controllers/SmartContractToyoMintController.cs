@@ -81,7 +81,21 @@ namespace BackendToyo.Controllers
         [HttpPost]
         public async Task<ActionResult<SmartContractToyoMint>> PostSmartContractToyoMint(SmartContractToyoMint smartContractToyoMint)
         {
-            _context.SmartContractToyoMints.Add(smartContractToyoMint);
+
+            var ToyoMint = await _context.SmartContractToyoMints.FirstOrDefaultAsync(p => p.TransactionHash == smartContractToyoMint.TransactionHash && p.TokenId == smartContractToyoMint.TokenId && p.ChainId == smartContractToyoMint.ChainId);
+            
+            if (ToyoMint == null)
+            {
+                _context.SmartContractToyoMints.Add(smartContractToyoMint);
+            } else {
+                ToyoMint = smartContractToyoMint;
+            }
+            
+            await _context.SaveChangesAsync();
+            
+            return smartContractToyoMint;
+
+           /*  _context.SmartContractToyoMints.Add(smartContractToyoMint);
             try
             {
                 await _context.SaveChangesAsync();
@@ -98,7 +112,7 @@ namespace BackendToyo.Controllers
                 }
             }
 
-            return CreatedAtAction("GetSmartContractToyoMint", new { id = smartContractToyoMint.TransactionHash }, smartContractToyoMint);
+            return CreatedAtAction("GetSmartContractToyoMint", new { id = smartContractToyoMint.TransactionHash }, smartContractToyoMint); */
         }
 
         // DELETE: api/SmartContractToyoMint/5
