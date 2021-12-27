@@ -94,20 +94,28 @@ namespace BackendToyo.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<SmartContractToyoSync>> PostSmartContractToyoSync(SmartContractToyoSync smartContractToyoSync)
-        {           
-
+        { 
             var ToyoSync = await _context.SmartContractToyoSyncs.FirstOrDefaultAsync(p => p.ChainId == smartContractToyoSync.ChainId && p.ContractAddress == smartContractToyoSync.ContractAddress && p.EventName == smartContractToyoSync.EventName);
-            
-            if (ToyoSync == null)
+            try
             {
-                _context.SmartContractToyoSyncs.Add(smartContractToyoSync);
-            } else {
-                ToyoSync.LastBlockNumber = smartContractToyoSync.LastBlockNumber;
+                 if (ToyoSync == null)
+                {
+                    _context.SmartContractToyoSyncs.Add(smartContractToyoSync);
+                } else {
+                    ToyoSync.LastBlockNumber = smartContractToyoSync.LastBlockNumber;
+                }
+                
+                await _context.SaveChangesAsync();
+                
+                return smartContractToyoSync;
             }
+            catch (System.Exception e)
+            {
+                Console.WriteLine("Error: ");
+                Console.WriteLine(e.ToString());
+                return NotFound(e);
+            }   
             
-            await _context.SaveChangesAsync();
-            
-            return smartContractToyoSync;
         }
 
         // DELETE: api/SmartContractToyoSync/5

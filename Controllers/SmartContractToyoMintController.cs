@@ -84,16 +84,26 @@ namespace BackendToyo.Controllers
 
             var ToyoMint = await _context.SmartContractToyoMints.FirstOrDefaultAsync(p => p.TransactionHash == smartContractToyoMint.TransactionHash && p.TokenId == smartContractToyoMint.TokenId && p.ChainId == smartContractToyoMint.ChainId);
             
-            if (ToyoMint == null)
+            try
             {
-                _context.SmartContractToyoMints.Add(smartContractToyoMint);
-            } else {
-                ToyoMint = smartContractToyoMint;
+                  if (ToyoMint == null)
+                {
+                    _context.SmartContractToyoMints.Add(smartContractToyoMint);
+                } else {
+                    ToyoMint = smartContractToyoMint;
+                }
+                
+                await _context.SaveChangesAsync();
+                
+                return smartContractToyoMint;
             }
-            
-            await _context.SaveChangesAsync();
-            
-            return smartContractToyoMint;
+            catch (System.Exception e)
+            {
+                Console.WriteLine("Error: ");
+                Console.WriteLine(e.ToString());
+                return NotFound(e);
+            }   
+           
 
            /*  _context.SmartContractToyoMints.Add(smartContractToyoMint);
             try

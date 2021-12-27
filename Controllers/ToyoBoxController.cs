@@ -138,7 +138,10 @@ namespace BackendToyo.Controllers
 
             List<SwapToyo> swapReturn = new List<SwapToyo>();
             do {
+                Console.WriteLine("Swap do toyo {0}", TokenId);
                 swapReturn = await SwapFunction(TokenId, walletAddress, chainId);
+                Console.WriteLine("SwapReturn Result, count {0}", swapReturn.Count());
+                Console.WriteLine(swapReturn);
             } while(swapReturn.Count() == 0);
 
             ToyoPlayer _toyoPlayer = new ToyoPlayer {
@@ -297,6 +300,8 @@ namespace BackendToyo.Controllers
 
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<List<SwapToyo>> SwapFunction(int TokenId, string walletAddress, string chainId) {
+            Console.WriteLine("Entrou na função do swap {0}", TokenId);
+
             var query = from scts in _context.Set<SmartContractToyoSwap>()
                         join sctt in _context.Set<SmartContractToyoTransfer>()
                             on new {
@@ -314,6 +319,8 @@ namespace BackendToyo.Controllers
                             on sctty.TypeId equals tt.TypeId
                         where scts.FromTokenId == TokenId && sctt.WalletAddress == walletAddress && sctt.ChainId == chainId && tt.Type == "toyo"
                         select new SwapToyo { TransactionHash = scts.TransactionHash, ChainId = scts.ChainId, ToTokenId = scts.ToTokenId, TypeToken = tt.TypeId, Name = sctty.Name };
+ 
+            Console.WriteLine("Retorno da query na função do swap {0}", query.ToListAsync().ToString());
 
             return await query.ToListAsync();
         }

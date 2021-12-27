@@ -84,16 +84,24 @@ namespace BackendToyo.Controllers
         { 
             var ToyoSwap = await _context.SmartContractToyoSwaps.FirstOrDefaultAsync(p => p.TransactionHash == smartContractToyoSwap.TransactionHash && p.ToTokenId == smartContractToyoSwap.ToTokenId && p.ChainId == smartContractToyoSwap.ChainId);
             
-            if (ToyoSwap == null)
+            try
             {
-                _context.SmartContractToyoSwaps.Add(smartContractToyoSwap);
-            } else {
-                ToyoSwap = smartContractToyoSwap;
+                if (ToyoSwap == null)
+                {
+                    _context.SmartContractToyoSwaps.Add(smartContractToyoSwap);
+                } else {
+                    ToyoSwap = smartContractToyoSwap;
+                }
+
+                await _context.SaveChangesAsync();
+                return smartContractToyoSwap; 
             }
-            
-            await _context.SaveChangesAsync();
-            
-            return smartContractToyoSwap;
+            catch (System.Exception e)
+            {
+                Console.WriteLine("Error: ");
+                Console.WriteLine(e.ToString());
+                return NotFound(e);
+            }       
         }
 
         // DELETE: api/SmartContractToyoSwap/5

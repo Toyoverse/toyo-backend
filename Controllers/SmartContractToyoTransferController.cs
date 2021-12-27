@@ -92,14 +92,16 @@ namespace BackendToyo.Controllers
                 } else {
                     ToyoTrans = smartContractToyoTransfer;
                 }
+
+                await _context.SaveChangesAsync();
+                return smartContractToyoTransfer;
             }
             catch (System.Exception e)
             {
+                Console.WriteLine("Error: ");
                 Console.WriteLine(e);
-            }
-            await _context.SaveChangesAsync();
-            
-            return smartContractToyoTransfer;
+                return NotFound(e);
+            }              
 
             /* 
 
