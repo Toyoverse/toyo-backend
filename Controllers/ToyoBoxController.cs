@@ -241,7 +241,13 @@ namespace BackendToyo.Controllers
                 Console.WriteLine(e);
             }
 
-            int _bonusCode = Convert.ToInt32(base64DecodeEncode.Base64Decode(porcentageBonusView.Ym9udXM));
+            int _bonusCode = 0;
+            if(porcentageBonusView.Ym9udXM.Length > 0) {
+                _bonusCode = Convert.ToInt32(base64DecodeEncode.Base64Decode(porcentageBonusView.Ym9udXM));
+            } else {
+                _bonusCode = 6367;
+            }
+
             string tokenId = base64DecodeEncode.Base64Decode(porcentageBonusView.dG9rZW5JZA);
             string chainId = porcentageBonusView.wallet.Split(";")[1];
             string walletAddress = porcentageBonusView.wallet.Split(";")[0];
@@ -328,6 +334,139 @@ namespace BackendToyo.Controllers
             return true;
         }
 
+        [HttpGet("minigame")]
+        public async Task<ActionResult<SortViewModel>> minigame(int TokenId, string walletAddress, string chainId)
+        {
+            var queryToyoPlayer = from toyoPlayer in _context.Set<ToyoPlayer>()
+                                        where toyoPlayer.TokenId == TokenId && toyoPlayer.WalletAddress == walletAddress && toyoPlayer.ChainId == chainId
+                                        select toyoPlayer;
+
+            var toyoPlayerReturn = await queryToyoPlayer.ToListAsync();
+
+            var queryPartsPlayer= from toyoParts in _context.Set<PartPlayer>()
+                                        where toyoParts.TokenId == TokenId && toyoParts.WalletAddress == walletAddress && toyoParts.ChainId == chainId
+                                        orderby toyoParts.Id
+                                        select toyoParts;
+
+            var toyoPartsReturn = await queryPartsPlayer.ToListAsync();   
+
+            var queryToyo= from toyo in _context.Set<Toyo>()
+                                        where toyo.Id == toyoPlayerReturn[0].ToyoId
+                                        select toyo;
+
+            var toyoReturn = await queryToyo.ToListAsync();
+
+            SortViewModel toyoRaffle = new SortViewModel();
+
+            List<AttributesJson> attributes = new List<AttributesJson> {
+                new AttributesJson { display_type = "string", trait_type = "Type", value = "9" },
+                new AttributesJson { display_type = "string", trait_type = "Toyo", value = toyoReturn[0].Name },
+                new AttributesJson { display_type = "string", trait_type = "Region", value = toyoReturn[0].Region },
+                new AttributesJson { display_type = "string", trait_type = "Rarity", value = (toyoReturn[0].Rarity == 1 ? "Common Edition" : (toyoReturn[0].Rarity == 2 ? "Uncommon Edition" : (toyoReturn[0].Rarity == 3 ? "Rare Edition" : (toyoReturn[0].Rarity == 4 ? "limited Edition" : (toyoReturn[0].Rarity == 5 ? "Collectors Edition" : "Prototype Edition" ))))) },
+                new AttributesJson { display_type = "number", trait_type = "Vitality", value = toyoPlayerReturn[0].Vitality.ToString() },
+                new AttributesJson { display_type = "number", trait_type = "Strength", value =toyoPlayerReturn[0].Strength.ToString() },
+                new AttributesJson { display_type = "number", trait_type = "Resistance", value =toyoPlayerReturn[0].Resistance.ToString() },
+                new AttributesJson { display_type = "number", trait_type = "CyberForce", value =toyoPlayerReturn[0].CyberForce.ToString() },
+                new AttributesJson { display_type = "number", trait_type = "Resilience", value =toyoPlayerReturn[0].Resilience.ToString() },
+                new AttributesJson { display_type = "number", trait_type = "Precision", value =toyoPlayerReturn[0].Precision.ToString() },
+                new AttributesJson { display_type = "number", trait_type = "Technique", value =toyoPlayerReturn[0].Technique.ToString() },
+                new AttributesJson { display_type = "number", trait_type = "Analysis", value =toyoPlayerReturn[0].Analysis.ToString() },
+                new AttributesJson { display_type = "number", trait_type = "Speed", value =toyoPlayerReturn[0].Speed.ToString() },
+                new AttributesJson { display_type = "number", trait_type = "Agility", value =toyoPlayerReturn[0].Agility.ToString() },
+                new AttributesJson { display_type = "number", trait_type = "Stamina", value =toyoPlayerReturn[0].Stamina.ToString() },
+                new AttributesJson { display_type = "number", trait_type = "Luck", value =toyoPlayerReturn[0].Luck.ToString() }
+            };
+
+            ToyoJson toyoJson = new ToyoJson() {
+                name = toyoReturn[0].Name,
+                description = toyoReturn[0].Desc,
+                image = toyoReturn[0].Thumb,
+                animation_url = toyoReturn[0].Video,
+                attributes = attributes.ToArray()
+            };
+
+            ToyoPlayer _toyoPlayer = new ToyoPlayer {
+                ToyoId = toyoPlayerReturn[0].ToyoId, 
+                TokenId = toyoPlayerReturn[0].TokenId,
+                Vitality = toyoPlayerReturn[0].Vitality,
+                Strength = toyoPlayerReturn[0].Strength,
+                Resistance = toyoPlayerReturn[0].Resistance,
+                CyberForce = toyoPlayerReturn[0].CyberForce,
+                Resilience = toyoPlayerReturn[0].Resilience,
+                Precision = toyoPlayerReturn[0].Precision,
+                Technique = toyoPlayerReturn[0].Technique,
+                Analysis = toyoPlayerReturn[0].Analysis,
+                Speed = toyoPlayerReturn[0].Speed,
+                Agility = toyoPlayerReturn[0].Agility,
+                Stamina = toyoPlayerReturn[0].Stamina,
+                Luck = toyoPlayerReturn[0].Luck,
+                WalletAddress = walletAddress,
+                ChainId = chainId,
+                ChangeValue = true
+            };            
+            
+            string json = JsonSerializer.Serialize(toyoJson);
+            json = json.Replace("\"display_type\":\"string\",", "");
+            for(int i = 0; i<10;i++) {
+                json = json.Replace($"\"{i}", $"{i}");
+                json = json.Replace($"{i}\"", $"{i}");
+            }
+            json = json.Replace("mp4", "mp4\"");
+
+            await System.IO.File.WriteAllTextAsync($"/tmp/toyoverse/{toyoPlayerReturn[0].TokenId}.json", json);
+
+            toyoRaffle.qParts = new int[][] {
+                 new int[] { 0, 0 },
+                 new int[] { toyoPartsReturn[0].StatId, toyoPartsReturn[0].BonusStat },
+                 new int[] { 0, 0 },
+                 new int[] { toyoPartsReturn[1].StatId, toyoPartsReturn[1].BonusStat },
+                 new int[] { toyoPartsReturn[2].StatId, toyoPartsReturn[2].BonusStat },
+                 new int[] { toyoPartsReturn[3].StatId, toyoPartsReturn[3].BonusStat },
+                 new int[] { toyoPartsReturn[4].StatId, toyoPartsReturn[4].BonusStat },
+                 new int[] { toyoPartsReturn[5].StatId, toyoPartsReturn[5].BonusStat },
+                 new int[] { toyoPartsReturn[6].StatId, toyoPartsReturn[6].BonusStat },
+                 new int[] { toyoPartsReturn[7].StatId, toyoPartsReturn[7].BonusStat },
+                 new int[] { toyoPartsReturn[8].StatId, toyoPartsReturn[8].BonusStat },
+             };
+
+            try
+            {
+                await saveToyoPlayer(_toyoPlayer);
+
+                for(int i = 1; i <= 10; i++) {
+                    if(i != 2) {
+                        await savePartPlayer(toyoPlayerReturn[0].ToyoId, i, toyoPlayerReturn[0].TokenId, walletAddress, chainId, toyoRaffle.qParts[i][0], toyoRaffle.qParts[i][1]);
+                    }
+                }
+            }
+            catch (System.Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            
+            toyoRaffle.qStats = new int[] {
+                0,
+                toyoPlayerReturn[0].Vitality,
+                toyoPlayerReturn[0].Strength,
+                toyoPlayerReturn[0].Resistance,
+                toyoPlayerReturn[0].CyberForce,
+                toyoPlayerReturn[0].Resilience,
+                toyoPlayerReturn[0].Precision,
+                toyoPlayerReturn[0].Technique,
+                toyoPlayerReturn[0].Analysis,
+                toyoPlayerReturn[0].Speed,
+                toyoPlayerReturn[0].Agility,
+                toyoPlayerReturn[0].Stamina,
+                toyoPlayerReturn[0].Luck
+            };
+
+            toyoRaffle.toyoRaridade = toyoReturn[0].Id;
+            toyoRaffle.raridade = toyoReturn[0].Rarity;
+            toyoRaffle.toyoId = toyoPlayerReturn[0].TokenId;
+
+            return toyoRaffle;
+        }
+
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<List<SwapToyo>> SwapFunction(int TokenId, string walletAddress, string chainId) {
             Console.WriteLine("Entrou na função do swap {0}", TokenId);
@@ -397,6 +536,99 @@ namespace BackendToyo.Controllers
             await _context.SaveChangesAsync();
             
             return true;
+        }
+
+        [HttpGet("onlyRaffle")]
+        public async Task<ActionResult<SortViewModel>> onlyRaffle(int TypeId, int TokenId, string walletAddress, string chainId, int newTokenId, bool Fortified = false)
+        {
+            Console.WriteLine("TokenId - Sorteio: {0}", TokenId);
+            Console.WriteLine("WalletAddress - Sorteio: {0}", walletAddress);
+
+            SortViewModel toyoRaffle = new SortViewModel();
+            toyoRaffle = raffle.main(Fortified);
+      
+            var queryToyo = from toyo in _context.Set<Toyo>()
+                                        where toyo.Id == toyoRaffle.toyoRaridade
+                                        select toyo;
+
+            var toyoReturn = await queryToyo.ToListAsync();   
+
+            List<AttributesJson> attributes = new List<AttributesJson> {
+                new AttributesJson { display_type = "string", trait_type = "Type", value = "9" },
+                new AttributesJson { display_type = "string", trait_type = "Toyo", value = toyoReturn[0].Name },
+                new AttributesJson { display_type = "string", trait_type = "Region", value = toyoReturn[0].Region },
+                new AttributesJson { display_type = "string", trait_type = "Rarity", value = (toyoRaffle.raridade == 1 ? "Common Edition" : (toyoRaffle.raridade == 2 ? "Uncommon Edition" : (toyoRaffle.raridade == 3 ? "Rare Edition" : (toyoRaffle.raridade == 4 ? "limited Edition" : (toyoRaffle.raridade == 5 ? "Collectors Edition" : "Prototype Edition" ))))) },
+                new AttributesJson { display_type = "number", trait_type = "Vitality", value = toyoRaffle.qStats[1].ToString() },
+                new AttributesJson { display_type = "number", trait_type = "Strength", value = toyoRaffle.qStats[2].ToString() },
+                new AttributesJson { display_type = "number", trait_type = "Resistance", value = toyoRaffle.qStats[3].ToString() },
+                new AttributesJson { display_type = "number", trait_type = "CyberForce", value = toyoRaffle.qStats[4].ToString() },
+                new AttributesJson { display_type = "number", trait_type = "Resilience", value = toyoRaffle.qStats[5].ToString() },
+                new AttributesJson { display_type = "number", trait_type = "Precision", value = toyoRaffle.qStats[6].ToString() },
+                new AttributesJson { display_type = "number", trait_type = "Technique", value = toyoRaffle.qStats[7].ToString() },
+                new AttributesJson { display_type = "number", trait_type = "Analysis", value = toyoRaffle.qStats[8].ToString() },
+                new AttributesJson { display_type = "number", trait_type = "Speed", value = toyoRaffle.qStats[9].ToString() },
+                new AttributesJson { display_type = "number", trait_type = "Agility", value = toyoRaffle.qStats[10].ToString() },
+                new AttributesJson { display_type = "number", trait_type = "Stamina", value = toyoRaffle.qStats[11].ToString() },
+                new AttributesJson { display_type = "number", trait_type = "Luck", value = toyoRaffle.qStats[12].ToString() }
+            };
+
+            ToyoJson toyoJson = new ToyoJson() {
+                name = toyoReturn[0].Name,
+                description = toyoReturn[0].Desc,
+                image = toyoReturn[0].Thumb,
+                animation_url = toyoReturn[0].Video,
+                attributes = attributes.ToArray()
+            };
+
+            ToyoPlayer _toyoPlayer = new ToyoPlayer {
+                ToyoId = toyoRaffle.toyoRaridade, 
+                TokenId = newTokenId,
+                Vitality = toyoRaffle.qStats[1],
+                Strength = toyoRaffle.qStats[2],
+                Resistance = toyoRaffle.qStats[3],
+                CyberForce = toyoRaffle.qStats[4],
+                Resilience = toyoRaffle.qStats[5],
+                Precision = toyoRaffle.qStats[6],
+                Technique = toyoRaffle.qStats[7],
+                Analysis = toyoRaffle.qStats[8],
+                Speed = toyoRaffle.qStats[9],
+                Agility = toyoRaffle.qStats[10],
+                Stamina = toyoRaffle.qStats[11],
+                Luck = toyoRaffle.qStats[12],
+                WalletAddress = walletAddress,
+                ChainId = chainId,
+                ChangeValue = false
+            };            
+            
+            string json = JsonSerializer.Serialize(toyoJson);
+            json = json.Replace("\"display_type\":\"string\",", "");
+            for(int i = 0; i<10;i++) {
+                json = json.Replace($"\"{i}", $"{i}");
+                json = json.Replace($"{i}\"", $"{i}");
+            }
+            json = json.Replace("mp4", "mp4\"");
+
+            await System.IO.File.WriteAllTextAsync($"/tmp/toyoverse/{newTokenId}.json", json);
+            //await System.IO.File.WriteAllTextAsync($"/tmp/toyoverse/1010.json", json);
+            Console.WriteLine("Json Saved");
+            try
+            {
+                await saveToyoPlayer(_toyoPlayer);
+
+                for(int i = 1; i <= 10; i++) {
+                    if(i != 2) {
+                        await savePartPlayer(toyoRaffle.toyoRaridade, i, newTokenId, walletAddress, chainId, toyoRaffle.qParts[i][0], toyoRaffle.qParts[i][1]);
+                    }
+                }
+            }
+            catch (System.Exception e)
+            {
+                Console.WriteLine(e);
+            }
+         
+            toyoRaffle.toyoId = newTokenId;
+
+            return toyoRaffle;
         }
     }
 }
