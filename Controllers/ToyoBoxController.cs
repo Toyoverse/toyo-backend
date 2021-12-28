@@ -73,9 +73,39 @@ namespace BackendToyo.Controllers
         }
 
         [HttpGet("getToyos")]
-        public async Task<ActionResult<List<BoxesViewModel>>> getToyos(string walletAddress, string chainId)
+        public async Task<ActionResult<List<ToyoViewModel>>> getToyos(string walletAddress, string chainId)
         {            
             var query = from sctt in _context.Set<SmartContractToyoTransfer>()
+                        join owners in (
+                            from _sctt in _context.Set<SmartContractToyoTransfer>()
+                            where _sctt.ChainId == chainId
+                            select new { _sctt.TokenId, _sctt.ChainId, _sctt.BlockNumber } into _scttS
+                            group _scttS by new { _scttS.TokenId, _scttS.ChainId  } into _scttGroup
+                            select new { TokenId = _scttGroup.Key.TokenId, ChainId = _scttGroup.Key.ChainId, BlockNumber = _scttGroup.Select(p => p.BlockNumber).Max() } 
+                        ) on new {
+                                _toyoTokenId = sctt.TokenId,
+                                _toyoChain = sctt.ChainId,
+                                _toyoBlockNumber = sctt.BlockNumber
+                            } equals new {
+                                _toyoTokenId = owners.TokenId ,
+                                _toyoChain = owners.ChainId,
+                                _toyoBlockNumber = owners.BlockNumber
+                            } 
+                        join sctm in _context.Set<SmartContractToyoMint>()
+                            on owners.TokenId equals sctm.TokenId 
+                        join sctty in _context.Set<SmartContractToyoType>()
+                            on sctm.TypeId equals sctty.TypeId        
+                        join tt in _context.Set<TypeToken>()
+                            on sctty.TypeId equals tt.TypeId
+                        join tp in _context.Set<ToyoPlayer>()
+                            on sctt.TokenId equals tp.TokenId
+                        join t in _context.Set<Toyo>()
+                            on tp.ToyoId equals t.Id
+                        where sctt.WalletAddress == walletAddress && sctt.ChainId == chainId && tt.Type == "toyo"
+                        select new ToyoViewModel(sctt.TokenId, t.Name, t.Thumb, t.Video, tp.ChangeValue);
+
+
+            /* var query = from sctt in _context.Set<SmartContractToyoTransfer>()
                         join sctm in _context.Set<SmartContractToyoMint>()
                             on sctt.TokenId equals sctm.TokenId
                         join sctty in _context.Set<SmartContractToyoType>()
@@ -83,7 +113,7 @@ namespace BackendToyo.Controllers
                         join tt in _context.Set<TypeToken>()
                             on sctty.TypeId equals tt.TypeId
                         where sctt.WalletAddress == walletAddress && sctt.ChainId == chainId && tt.Type == "toyo"
-                        select new BoxesViewModel(sctt.TokenId, sctm.TypeId, sctty.Name);
+                        select new BoxesViewModel(sctt.TokenId, sctm.TypeId, sctty.Name); */
 
             return await query.ToListAsync();
         }
@@ -320,7 +350,9 @@ namespace BackendToyo.Controllers
                         where scts.FromTokenId == TokenId && sctt.WalletAddress == walletAddress && sctt.ChainId == chainId && tt.Type == "toyo"
                         select new SwapToyo { TransactionHash = scts.TransactionHash, ChainId = scts.ChainId, ToTokenId = scts.ToTokenId, TypeToken = tt.TypeId, Name = sctty.Name };
  
-            Console.WriteLine("Retorno da query na função do swap {0}", query.ToListAsync().ToString());
+            var result = await query.ToListAsync();
+
+            Console.WriteLine("Retorno da query na função do swap {0}", result);
 
             return await query.ToListAsync();
         }
