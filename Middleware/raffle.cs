@@ -5,7 +5,7 @@ namespace BackendToyo.Middleware
 {
     public static class raffle
     {
-        public static SortViewModel main(bool fortified)
+        public static SortViewModel main(bool fortified, bool jakana)
         { 
             int sort = rnd(0,1000);
             int raridade = 0;
@@ -35,7 +35,8 @@ namespace BackendToyo.Middleware
                     raridade = 3;
             }
 
-            if (raridade == 1 || raridade == 2)
+            if(!jakana) {
+                if (raridade == 1 || raridade == 2)
                 toyoRaridade = raridade;
             else if (raridade == 3)
                 if (rnd(0,100) <= 50)
@@ -44,7 +45,38 @@ namespace BackendToyo.Middleware
                     toyoRaridade = 4;
             else if (raridade >= 4)
                 toyoRaridade = raridade + 1;
-            
+            } else {
+                if (raridade == 1)
+                    toyoRaridade = 8;
+                else if (raridade == 2)
+                    toyoRaridade = 9;
+                else if (raridade == 3) {
+                    int tempRandom = rnd(0, 120);
+                    if (tempRandom <= 40)
+                        toyoRaridade = 10;
+                    else if (tempRandom <= 80)
+                        toyoRaridade = 11;
+                    else
+                        toyoRaridade = 12;
+                }                       
+                else if (raridade == 4) {
+                    int tempRandom = rnd(0, 100);
+                    if (tempRandom <= 50)
+                        toyoRaridade = 13;
+                    else
+                        toyoRaridade = 14;
+                }
+                else if (raridade == 5)  {
+                int tempRandom = rnd(0, 100);
+                    if (tempRandom <= 50)
+                        toyoRaridade = 15;
+                    else
+                        toyoRaridade = 23;
+                }
+                else if (raridade == 6)
+                    toyoRaridade = 16;
+            }
+
             int qRari = raridade;
 
             int nRnd = rnd(0, 1000);

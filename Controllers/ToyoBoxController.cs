@@ -72,6 +72,30 @@ namespace BackendToyo.Controllers
             return await query.ToListAsync();
         }
 
+        [HttpGet("getStatusParts")]
+        public async Task<ActionResult<List<PartsStatsViewModel>>> getStatusParts(string walletAddress, string chainId, int tokenId)
+        {            
+            var query = from pp in _context.Set<PartPlayer>()
+                                  join s in _context.Set<Stat>()
+                                    on pp.StatId equals s.Id
+                                  join p in _context.Set<Parts>()
+                                    on pp.PartId equals p.Id
+                                  where pp.TokenId == tokenId && pp.WalletAddress == walletAddress && pp.ChainId == chainId
+                                  select new PartsStatsViewModel(p.Part, s.Name, pp.BonusStat) ;
+
+            return await query.ToListAsync();
+        }
+
+        [HttpGet("getStatusToyo")]
+        public async Task<ActionResult<List<ToyoStatsViewModel>>> getStatusToyo(string walletAddress, string chainId, int tokenId)
+        {            
+            var query = from tp in _context.Set<ToyoPlayer>()                                 
+                                  where tp.TokenId == tokenId && tp.WalletAddress == walletAddress && tp.ChainId == chainId
+                                  select new ToyoStatsViewModel(tp.ToyoId, tp.Vitality, tp.Strength, tp.Resistance, tp.CyberForce, tp.Resilience, tp.Precision, tp.Technique, tp.Analysis, tp.Speed, tp.Agility, tp.Stamina, tp.Luck);
+
+            return await query.ToListAsync();
+        }
+
         [HttpGet("getToyos")]
         public async Task<ActionResult<List<ToyoViewModel>>> getToyos(string walletAddress, string chainId)
         {            
@@ -125,13 +149,13 @@ namespace BackendToyo.Controllers
         } */
 
         [HttpGet("sortBox")]
-        public async Task<ActionResult<SortViewModel>> sortBox(int TypeId, int TokenId, string walletAddress, string chainId, bool Fortified = false)
+        public async Task<ActionResult<SortViewModel>> sortBox(int TypeId, int TokenId, string walletAddress, string chainId, bool Fortified = false, bool Jakana = false)
         {
             Console.WriteLine("TokenId - Sorteio: {0}", TokenId);
             Console.WriteLine("WalletAddress - Sorteio: {0}", walletAddress);
 
             SortViewModel toyoRaffle = new SortViewModel();
-            toyoRaffle = raffle.main(Fortified);
+            toyoRaffle = raffle.main(Fortified, Jakana);
       
             var queryToyo = from toyo in _context.Set<Toyo>()
                                         where toyo.Id == toyoRaffle.toyoRaridade
@@ -169,7 +193,7 @@ namespace BackendToyo.Controllers
             List<SwapToyo> swapReturn = new List<SwapToyo>();
             do {
                 Console.WriteLine("Swap do toyo {0}", TokenId);
-                swapReturn = await SwapFunction(TokenId, walletAddress, chainId);
+                swapReturn = await SwapFunction(TokenId, walletAddress, chainId); 
                 Console.WriteLine("SwapReturn Result, count {0}", swapReturn.Count());
                 Console.WriteLine(swapReturn);
             } while(swapReturn.Count() == 0);
@@ -201,7 +225,6 @@ namespace BackendToyo.Controllers
                 json = json.Replace($"{i}\"", $"{i}");
             }
             json = json.Replace("mp4", "mp4\"");
-
             await System.IO.File.WriteAllTextAsync($"/tmp/toyoverse/{swapReturn[0].ToTokenId}.json", json);
             //await System.IO.File.WriteAllTextAsync($"/tmp/toyoverse/1010.json", json);
             Console.WriteLine("Json Saved");
@@ -219,7 +242,6 @@ namespace BackendToyo.Controllers
             {
                 Console.WriteLine(e);
             }
-         
             toyoRaffle.toyoId = swapReturn[0].ToTokenId;
 
             return toyoRaffle;
@@ -245,7 +267,7 @@ namespace BackendToyo.Controllers
             if(porcentageBonusView.Ym9udXM.Length > 0) {
                 _bonusCode = Convert.ToInt32(base64DecodeEncode.Base64Decode(porcentageBonusView.Ym9udXM));
             } else {
-                _bonusCode = 6367;
+                _bonusCode = 10;
             }
 
             string tokenId = base64DecodeEncode.Base64Decode(porcentageBonusView.dG9rZW5JZA);
@@ -253,7 +275,7 @@ namespace BackendToyo.Controllers
             string walletAddress = porcentageBonusView.wallet.Split(";")[0];
             float[] porcentageBonus = new float[] { 1, 1.01f, 1.02f, 1.03f, 1.04f, 1.05f, 1.08f, 1.11f, 1.14f, 1.17f, 1.2f };
 
-            int[] numBase = new int[] { 0, 582, 49751, 67412, 714, 65852, 4414, 8857445, 5114514, 222541, 6367 };
+            //int[] numBase = new int[] { 0, 582, 49751, 67412, 714, 65852, 4414, 8857445, 5114514, 222541, 6367 };
 
             ToyoPlayer _toyoPlayer = new ToyoPlayer(); 
             Toyo _toyo = new Toyo();
@@ -267,7 +289,8 @@ namespace BackendToyo.Controllers
             if (_toyoPlayer.ChangeValue == false) {
                 
 
-                int _bonus = Array.IndexOf(numBase, _bonusCode);
+                //int _bonus = Array.IndexOf(numBase, _bonusCode);
+                int _bonus = _bonusCode;
                 
                 if(_bonus <= 10 && _bonus > 0 ) {
                     
@@ -470,7 +493,7 @@ namespace BackendToyo.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<List<SwapToyo>> SwapFunction(int TokenId, string walletAddress, string chainId) {
             Console.WriteLine("Entrou na função do swap {0}", TokenId);
-
+            
             var query = from scts in _context.Set<SmartContractToyoSwap>()
                         join sctt in _context.Set<SmartContractToyoTransfer>()
                             on new {
@@ -539,13 +562,13 @@ namespace BackendToyo.Controllers
         }
 
         [HttpGet("onlyRaffle")]
-        public async Task<ActionResult<SortViewModel>> onlyRaffle(int TypeId, int TokenId, string walletAddress, string chainId, int newTokenId, bool Fortified = false)
+        public async Task<ActionResult<SortViewModel>> onlyRaffle(int TypeId, int TokenId, string walletAddress, string chainId, int newTokenId, bool Fortified = false, bool Jakana = false)
         {
             Console.WriteLine("TokenId - Sorteio: {0}", TokenId);
             Console.WriteLine("WalletAddress - Sorteio: {0}", walletAddress);
 
             SortViewModel toyoRaffle = new SortViewModel();
-            toyoRaffle = raffle.main(Fortified);
+            toyoRaffle = raffle.main(Fortified, Jakana);
       
             var queryToyo = from toyo in _context.Set<Toyo>()
                                         where toyo.Id == toyoRaffle.toyoRaridade
