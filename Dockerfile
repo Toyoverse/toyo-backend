@@ -16,7 +16,7 @@ RUN mkdir /tmp/toyoverse
 RUN dotnet dev-certs https --trust
 
 ENV ASPNETCORE_URLS=https://+
-ENV ASPNETCORE_ENVIRONMENT=Production
+ENV ASPNETCORE_ENVIRONMENT=Development
 ENV ASPNETCORE_HTTPS_PORT=443
 
 EXPOSE 80
