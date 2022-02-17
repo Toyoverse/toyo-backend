@@ -126,7 +126,7 @@ namespace BackendToyo.Controllers
                         join t in _context.Set<Toyo>()
                             on tp.ToyoId equals t.Id
                         where sctt.WalletAddress == walletAddress && sctt.ChainId == chainId && tt.Type == "toyo"
-                        select new ToyoViewModel(sctt.TokenId, t.Name, t.Thumb, t.Video, tp.ChangeValue);
+                        select new ToyoViewModel(sctt.TokenId, t.Name, t.Thumb, t.Video, tp.ChangeValue, t.Region);
 
 
             /* var query = from sctt in _context.Set<SmartContractToyoTransfer>()
