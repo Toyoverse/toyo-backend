@@ -127,7 +127,7 @@ namespace BackendToyo.Middleware
 
             return svm;
         }
-        public static int rnd(int _min, int _max, int but = -999) {
+        private static int rnd(int _min, int _max, int but = -999) {
 
             long seed = preRnd(0, 1000);
 
@@ -173,7 +173,7 @@ namespace BackendToyo.Middleware
 
         }
 
-        public static int preRnd(int n1, int n2, int but = -1) {
+        private static int preRnd(int n1, int n2, int but = -1) {
             int saida = 0;
 
             var random = new Random(Guid.NewGuid().GetHashCode());

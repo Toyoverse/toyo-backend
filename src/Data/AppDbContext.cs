@@ -1,14 +1,19 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using BackendToyo.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BackendToyo.Data
 {
     public class AppDbContext : DbContext
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+        private IEntityTypeConfiguration<TypeToken> typeTokenConfiguration;
+        public AppDbContext(
+            DbContextOptions<AppDbContext> options,
+            IEntityTypeConfiguration<TypeToken> typeTokenConfiguration
+            ) : base(options)
         {
-
+            this.typeTokenConfiguration = typeTokenConfiguration;
         }
 
         public DbSet<Token> Tokens { get; set; }
@@ -45,6 +50,8 @@ namespace BackendToyo.Data
                 .HasIndex(u => u.ChainId)
                 .IsUnique(false);
 
+            modelBuilder.ApplyConfiguration<TypeToken>(typeTokenConfiguration);
+
             modelBuilder.Entity<SmartContractToyoSwap>()
                 .HasKey(p => new { p.TransactionHash, p.FromTokenId, p.ToTokenId, p.ChainId});
 
@@ -54,29 +61,14 @@ namespace BackendToyo.Data
             modelBuilder.Entity<Player>()
                 .HasKey(p => p.Id);                
 
-            modelBuilder.Entity<TypeToken>()
-                .HasKey(p => new { p.TypeId, p.ChainId });
-
             modelBuilder.Entity<Token>()
                 .HasKey(p => p.Id);
-
-            modelBuilder.Entity<TypeToken>()
-                .HasOne<SmartContractToyoType>()
-                .WithMany()
-                .HasForeignKey(p => p.TypeId)
-                .HasPrincipalKey(p => p.TypeId);
-           
-            modelBuilder.Entity<TypeToken>()
-                .HasOne<SmartContractToyoType>()
-                .WithMany()
-                .HasForeignKey(p => p.ChainId)
-                .HasPrincipalKey(p => p.ChainId);
 
             modelBuilder.Entity<Token>()
                 .HasOne<TypeToken>()
                 .WithMany()
                 .HasForeignKey(p => p.TypeId)
-                .HasPrincipalKey(p => p.TypeId);
+                .HasPrincipalKey(p => p.Id);
 
             modelBuilder.Entity<TxTokenPlayer>()
                 .HasKey(p => p.Id);

@@ -13,6 +13,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using BackendToyo.Data;
 using Microsoft.EntityFrameworkCore;
+using BackendToyo.Services;
+using BackendToyo.Models;
+using BackendToyo.Data.EntityConfigurations;
 
 namespace BackendToyo
 {
@@ -34,6 +37,7 @@ namespace BackendToyo
                     builder.WithOrigins("*");
                 });
             });
+            addServices(services);
 
             //services.AddDbContext<AppDbContext>(options => options.UseMySql(sqlConnection, ServerVersion.AutoDetect(sqlConnection)));
             services.AddDbContext<AppDbContext>(options => options.UseMySql(sqlConnection, ServerVersion.AutoDetect(sqlConnection)));
@@ -42,6 +46,12 @@ namespace BackendToyo
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "BackendToyo", Version = "v1" });
             });
+        }
+        // This method add implementations of 
+        private void addServices(IServiceCollection services)
+        {
+            services.AddScoped<ISortRaffleService, SortRaffleService>(); 
+            services.AddSingleton<IEntityTypeConfiguration<TypeToken>, TypeTokenConfiguration>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
