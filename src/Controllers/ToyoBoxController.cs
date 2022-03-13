@@ -546,7 +546,7 @@ namespace BackendToyo.Controllers
                             on scts.ToTypeId equals sctty.TypeId
                         join tt in _context.Set<TypeToken>()
                             on sctty.TypeId equals tt.Id
-                        where scts.FromTokenId == TokenId && sctt.WalletAddress == walletAddress && sctt.ChainId == chainId && tt.Type == "toyo"
+                        // where scts.FromTokenId == TokenId && sctt.WalletAddress == walletAddress && sctt.ChainId == chainId && tt.Type == "toyo"
                         select new SwapToyo { TransactionHash = scts.TransactionHash, ChainId = scts.ChainId, ToTokenId = scts.ToTokenId, TypeToken = tt.Id, Name = sctty.Name };
 
             var result = await query.ToListAsync();

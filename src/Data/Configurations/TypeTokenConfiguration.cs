@@ -21,22 +21,22 @@ namespace BackendToyo.Data.EntityConfigurations
                 .HasPrincipalKey(p => p.ChainId);
 
             builder.Property(p => p.Id)
-                .HasColumnName("TypeId")
+                .HasColumnName("id_typetoken")
                 .HasColumnType("int");
             
             builder.Property(p => p.ChainId)
-                .HasColumnName("ChainId")
+                .HasColumnName("id_chain")
                 .HasColumnType("varchar")
                 .HasMaxLength(10);
 
             builder.Property(p => p.Type)
-                .HasColumnName("Type")
+                .HasColumnName("ds_typetoken")
                 .HasColumnType("varchar")
                 .HasMaxLength(20);
 
             builder.Property( p=> p.Name)
+                .HasColumnName("nm_typetoken")
                 .HasColumnType("varchar")
-                .HasColumnName("Name")
                 .HasMaxLength(50);
         }
     }

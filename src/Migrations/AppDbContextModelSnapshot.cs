@@ -522,22 +522,22 @@ namespace BackendToyo.Migrations
                 {
                     b.Property<int>("Id")
                         .HasColumnType("int")
-                        .HasColumnName("TypeId");
+                        .HasColumnName("id_typetoken");
 
                     b.Property<string>("ChainId")
                         .HasMaxLength(10)
                         .HasColumnType("varchar(10)")
-                        .HasColumnName("ChainId");
+                        .HasColumnName("id_chain");
 
                     b.Property<string>("Name")
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)")
-                        .HasColumnName("Name");
+                        .HasColumnName("nm_typetoken");
 
                     b.Property<string>("Type")
                         .HasMaxLength(20)
                         .HasColumnType("varchar(20)")
-                        .HasColumnName("Type");
+                        .HasColumnName("ds_typetoken");
 
                     b.HasKey("Id", "ChainId");
 
