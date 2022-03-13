@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BackendToyo.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20211216004614_AddRegionInToyo")]
-    partial class AddRegionInToyo
+    [Migration("20220313185954_AlterTokenType")]
+    partial class AlterTokenType
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -37,6 +37,39 @@ namespace BackendToyo.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Events");
+                });
+
+            modelBuilder.Entity("BackendToyo.Models.PartPlayer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("BonusStat")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ChainId")
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("PartId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StatId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TokenId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("WalletAddress")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PartId");
+
+                    b.HasIndex("StatId");
+
+                    b.ToTable("PartsPlayer");
                 });
 
             modelBuilder.Entity("BackendToyo.Models.Parts", b =>
@@ -239,6 +272,85 @@ namespace BackendToyo.Migrations
                     b.ToTable("SmartContractToyoTypes");
                 });
 
+            modelBuilder.Entity("BackendToyo.Models.Stat", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Stats");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Vitality"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Strength"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Resistance"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "CyberForce"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "Resilience"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Name = "Precision"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Name = "Technique"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Name = "Analysis"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Name = "Speed"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Name = "Agility"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Name = "Stamina"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Name = "Luck"
+                        });
+                });
+
             modelBuilder.Entity("BackendToyo.Models.Token", b =>
                 {
                     b.Property<Guid>("Id")
@@ -305,7 +417,71 @@ namespace BackendToyo.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Toyo");
+                    b.ToTable("Toyos");
+                });
+
+            modelBuilder.Entity("BackendToyo.Models.ToyoPlayer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("Agility")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Analysis")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ChainId")
+                        .HasColumnType("longtext");
+
+                    b.Property<bool>("ChangeValue")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<int>("CyberForce")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Luck")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Precision")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Resilience")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Resistance")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Speed")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Stamina")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Strength")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Technique")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TokenId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ToyoId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Vitality")
+                        .HasColumnType("int");
+
+                    b.Property<string>("WalletAddress")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ToyoId");
+
+                    b.ToTable("ToyosPlayer");
                 });
 
             modelBuilder.Entity("BackendToyo.Models.TxTokenPlayer", b =>
@@ -346,23 +522,45 @@ namespace BackendToyo.Migrations
 
             modelBuilder.Entity("BackendToyo.Models.TypeToken", b =>
                 {
-                    b.Property<int>("TypeId")
-                        .HasColumnType("int");
+                    b.Property<int>("Id")
+                        .HasColumnType("int")
+                        .HasColumnName("TypeId");
 
                     b.Property<string>("ChainId")
-                        .HasColumnType("varchar(255)");
+                        .HasMaxLength(10)
+                        .HasColumnType("varchar(10)")
+                        .HasColumnName("ChainId");
 
                     b.Property<string>("Name")
-                        .HasColumnType("longtext");
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("Name");
 
                     b.Property<string>("Type")
-                        .HasColumnType("longtext");
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)")
+                        .HasColumnName("Type");
 
-                    b.HasKey("TypeId", "ChainId");
+                    b.HasKey("Id", "ChainId");
 
                     b.HasIndex("ChainId");
 
-                    b.ToTable("TypeTokens");
+                    b.ToTable("TypeToken");
+                });
+
+            modelBuilder.Entity("BackendToyo.Models.PartPlayer", b =>
+                {
+                    b.HasOne("BackendToyo.Models.Parts", null)
+                        .WithMany()
+                        .HasForeignKey("PartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BackendToyo.Models.Stat", null)
+                        .WithMany()
+                        .HasForeignKey("StatId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("BackendToyo.Models.Token", b =>
@@ -370,7 +568,16 @@ namespace BackendToyo.Migrations
                     b.HasOne("BackendToyo.Models.TypeToken", null)
                         .WithMany()
                         .HasForeignKey("TypeId")
-                        .HasPrincipalKey("TypeId")
+                        .HasPrincipalKey("Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("BackendToyo.Models.ToyoPlayer", b =>
+                {
+                    b.HasOne("BackendToyo.Models.Toyo", null)
+                        .WithMany()
+                        .HasForeignKey("ToyoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -401,7 +608,7 @@ namespace BackendToyo.Migrations
 
                     b.HasOne("BackendToyo.Models.SmartContractToyoType", null)
                         .WithMany()
-                        .HasForeignKey("TypeId")
+                        .HasForeignKey("Id")
                         .HasPrincipalKey("TypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
