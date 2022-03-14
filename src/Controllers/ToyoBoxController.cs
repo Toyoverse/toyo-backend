@@ -12,6 +12,8 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Diagnostics;
 using BackendToyo.Services;
+using Microsoft.Extensions.Configuration;
+using System.IO;
 
 namespace BackendToyo.Controllers
 {
@@ -156,6 +158,7 @@ namespace BackendToyo.Controllers
         [HttpGet("sortBox")]
         public async Task<ActionResult<SortViewModel>> sortBox(
             [FromServices] ISortRaffleService sortRaffleService,
+            [FromServices] IConfiguration configuration,
             int TypeId,
             int TokenId,
             string walletAddress,
@@ -242,7 +245,11 @@ namespace BackendToyo.Controllers
                 json = json.Replace($"{i}\"", $"{i}");
             }
             json = json.Replace("mp4", "mp4\"");
-            await System.IO.File.WriteAllTextAsync($"/tmp/toyoverse/{swapReturn[0].ToTokenId}.json", json);
+
+            var jsonfolder = new DirectoryInfo(configuration["Json_Folder"]);
+            if(!jsonfolder.Exists) jsonfolder.Create();
+
+            await System.IO.File.WriteAllTextAsync(Path.Combine(jsonfolder.FullName,$"{swapReturn[0].ToTokenId}.json"), json);
             //await System.IO.File.WriteAllTextAsync($"/tmp/toyoverse/1010.json", json);
             Console.WriteLine("Json Saved");
             try

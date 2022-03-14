@@ -522,7 +522,7 @@ namespace BackendToyo.Migrations
                 {
                     b.Property<int>("Id")
                         .HasColumnType("int")
-                        .HasColumnName("id_typetoken");
+                        .HasColumnName("id_type_token");
 
                     b.Property<string>("ChainId")
                         .HasMaxLength(10)
@@ -532,18 +532,16 @@ namespace BackendToyo.Migrations
                     b.Property<string>("Name")
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)")
-                        .HasColumnName("nm_typetoken");
+                        .HasColumnName("tx_name");
 
                     b.Property<string>("Type")
                         .HasMaxLength(20)
                         .HasColumnType("varchar(20)")
-                        .HasColumnName("ds_typetoken");
+                        .HasColumnName("ds_type_token");
 
                     b.HasKey("Id", "ChainId");
 
-                    b.HasIndex("ChainId");
-
-                    b.ToTable("TypeToken");
+                    b.ToTable("tb_type_token");
                 });
 
             modelBuilder.Entity("BackendToyo.Models.PartPlayer", b =>
@@ -591,23 +589,6 @@ namespace BackendToyo.Migrations
                     b.HasOne("BackendToyo.Models.Token", null)
                         .WithMany()
                         .HasForeignKey("TokenId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("BackendToyo.Models.TypeToken", b =>
-                {
-                    b.HasOne("BackendToyo.Models.SmartContractToyoType", null)
-                        .WithMany()
-                        .HasForeignKey("ChainId")
-                        .HasPrincipalKey("ChainId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BackendToyo.Models.SmartContractToyoType", null)
-                        .WithMany()
-                        .HasForeignKey("Id")
-                        .HasPrincipalKey("TypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

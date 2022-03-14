@@ -9,19 +9,11 @@ namespace BackendToyo.Data.EntityConfigurations
         public void Configure(EntityTypeBuilder<TypeToken> builder)
         {
             builder.HasKey(p => new { p.Id, p.ChainId });
-
-            builder.HasOne<SmartContractToyoType>()
-                .WithMany()
-                .HasForeignKey(p => p.Id)
-                .HasPrincipalKey(p => p.TypeId);
-           
-            builder.HasOne<SmartContractToyoType>()
-                .WithMany()
-                .HasForeignKey(p => p.ChainId)
-                .HasPrincipalKey(p => p.ChainId);
-
+            
+            builder.ToTable("tb_type_token");
+            
             builder.Property(p => p.Id)
-                .HasColumnName("id_typetoken")
+                .HasColumnName("id_type_token")
                 .HasColumnType("int");
             
             builder.Property(p => p.ChainId)
@@ -30,12 +22,12 @@ namespace BackendToyo.Data.EntityConfigurations
                 .HasMaxLength(10);
 
             builder.Property(p => p.Type)
-                .HasColumnName("ds_typetoken")
+                .HasColumnName("ds_type_token")
                 .HasColumnType("varchar")
                 .HasMaxLength(20);
 
             builder.Property( p=> p.Name)
-                .HasColumnName("nm_typetoken")
+                .HasColumnName("tx_name")
                 .HasColumnType("varchar")
                 .HasMaxLength(50);
         }
