@@ -5,8 +5,17 @@
 + Docker: https://www.docker.com/products/docker-desktop
 + Dotnet Core SDK 5: https://dotnet.microsoft.com/en-us/download/dotnet/5.0
 
-### Running this project on docker containers:
---
+### **Environment Variables:**
++ *Toyo_ConnectionStrings__DefaultConnection*
+    + Database connection string
++ *Toyo_Json_Folder*
+    + json files repository
++ *Toyo_Timeout_Swap_Milliseconds*
+    + time in milliseconds to wait the swap contract before get a timeout
++ *Toyo_Swap_Interval_Milliseconds*
+    + time in milliseconds between each query on database while wait swap timeout
+### **Running this project on docker containers:**
+
 1. #### Download this project
 
 2. #### On project folder, go to *env-var* folder and run the respective shell script (**win.bat** for **windows** or **lin.sh** for **linux**) to set the needed environment variables
