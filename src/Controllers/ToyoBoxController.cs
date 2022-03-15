@@ -14,22 +14,26 @@ using System.Diagnostics;
 using BackendToyo.Services;
 using Microsoft.Extensions.Configuration;
 using System.IO;
+using BackendToyo.Models.ResponseEntities;
+using System.Threading;
 
 namespace BackendToyo.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-
-    public class ToyoBoxController : ControllerBase
+    public class ToyoBoxController : ToyoBoxApi 
     {
         private readonly AppDbContext _context;
-        public ToyoBoxController(AppDbContext context)
+        private readonly int _timeoutSwapFunction;
+        private readonly int _intervalSwapFunctionQuery;
+        private readonly string _jsonFolderPath;
+        public ToyoBoxController(AppDbContext context, IConfiguration configuration)
         {
+            _jsonFolderPath = configuration["Json_Folder"];
+            _timeoutSwapFunction = int.Parse(configuration["Timeout_Swap_Milliseconds"]);
+            _intervalSwapFunctionQuery = int.Parse(configuration["Swap_Interval_Milliseconds"]);
             _context = context;
         }
 
-        [HttpGet("getBoxes")]
-        public async Task<ActionResult<List<BoxesViewModel>>> GetBoxes(string walletAddress, string chainId)
+        public async override Task<ActionResult<List<BoxesViewModel>>> GetBoxes(string walletAddress, string chainId)
         {
             var query = from sctt in _context.Set<SmartContractToyoTransfer>()
                         join owners in (
@@ -155,10 +159,7 @@ namespace BackendToyo.Controllers
             return false;
         } */
 
-        [HttpGet("sortBox")]
-        public async Task<ActionResult<SortViewModel>> sortBox(
-            [FromServices] ISortRaffleService sortRaffleService,
-            [FromServices] IConfiguration configuration,
+        public override async Task<ActionResult<SortViewModel>> sortBox(
             int TypeId,
             int TokenId,
             string walletAddress,
@@ -208,14 +209,10 @@ namespace BackendToyo.Controllers
             };
 
             List<SwapToyo> swapReturn = new List<SwapToyo>();
-            do
-            {
-                Console.WriteLine("Swap do toyo {0}", TokenId);
-                swapReturn = await SwapFunction(TokenId, walletAddress, chainId);
-                Console.WriteLine("SwapReturn Result, count {0}", swapReturn.Count());
-                Console.WriteLine(swapReturn);
-            } while (swapReturn.Count() == 0);
-
+           
+            swapReturn = await SwapFunction(TokenId, walletAddress, chainId);
+            if(!swapReturn.Any()) return NotFound(new ResponseStatusEntity(404, "Not Found"));
+            
             ToyoPlayer _toyoPlayer = new ToyoPlayer
             {
                 ToyoId = toyoRaffle.toyoRaridade,
@@ -246,7 +243,7 @@ namespace BackendToyo.Controllers
             }
             json = json.Replace("mp4", "mp4\"");
 
-            var jsonfolder = new DirectoryInfo(configuration["Json_Folder"]);
+            var jsonfolder = new DirectoryInfo(_jsonFolderPath);
             if(!jsonfolder.Exists) jsonfolder.Create();
 
             await System.IO.File.WriteAllTextAsync(Path.Combine(jsonfolder.FullName,$"{swapReturn[0].ToTokenId}.json"), json);
@@ -278,13 +275,13 @@ namespace BackendToyo.Controllers
         {
             try
             {
-                Console.WriteLine("Bonus received Code: {0}", porcentageBonusView.Ym9udXM);
-                Console.WriteLine("TokenId received Code: {0}", porcentageBonusView.dG9rZW5JZA);
+                Console.WriteLine("Bonus received Code: {0}", porcentageBonusView.bonus);
+                Console.WriteLine("TokenId received Code: {0}", porcentageBonusView.tokenId);
                 Console.WriteLine("ChainId received: {0}", porcentageBonusView.wallet.Split(";")[1]);
                 Console.WriteLine("WalletAddress received: {0}", porcentageBonusView.wallet.Split(";")[0]);
 
-                Console.WriteLine("Bonus received Decode: {0}", base64DecodeEncode.Base64Decode(porcentageBonusView.Ym9udXM));
-                Console.WriteLine("TokenId received Decode: {0}", base64DecodeEncode.Base64Decode(porcentageBonusView.dG9rZW5JZA));
+                Console.WriteLine("Bonus received Decode: {0}", base64DecodeEncode.Base64Decode(porcentageBonusView.bonus));
+                Console.WriteLine("TokenId received Decode: {0}", base64DecodeEncode.Base64Decode(porcentageBonusView.tokenId));
 
             }
             catch (SystemException e)
@@ -293,16 +290,16 @@ namespace BackendToyo.Controllers
             }
 
             int _bonusCode = 0;
-            if (porcentageBonusView.Ym9udXM.Length > 0)
+            if (porcentageBonusView.bonus.Length > 0)
             {
-                _bonusCode = Convert.ToInt32(base64DecodeEncode.Base64Decode(porcentageBonusView.Ym9udXM));
+                _bonusCode = Convert.ToInt32(base64DecodeEncode.Base64Decode(porcentageBonusView.bonus));
             }
             else
             {
                 _bonusCode = 10;
             }
 
-            string tokenId = base64DecodeEncode.Base64Decode(porcentageBonusView.dG9rZW5JZA);
+            string tokenId = base64DecodeEncode.Base64Decode(porcentageBonusView.tokenId);
             string chainId = porcentageBonusView.wallet.Split(";")[1];
             string walletAddress = porcentageBonusView.wallet.Split(";")[0];
             float[] porcentageBonus = new float[] { 1, 1.01f, 1.02f, 1.03f, 1.04f, 1.05f, 1.08f, 1.11f, 1.14f, 1.17f, 1.2f };
@@ -384,8 +381,12 @@ namespace BackendToyo.Controllers
                         json = json.Replace($"{i}\"", $"{i}");
                     }
                     json = json.Replace("mp4", "mp4\"");
-
-                    await System.IO.File.WriteAllTextAsync($"/tmp/toyoverse/{tokenId}.json", json);
+                   
+                    var jsonfolder = new DirectoryInfo(_jsonFolderPath);
+                    if(!jsonfolder.Exists) jsonfolder.Create();
+                    var targetFile = $"{jsonfolder.FullName}{Path.DirectorySeparatorChar}{tokenId}.json";
+                    
+                    await System.IO.File.WriteAllTextAsync(targetFile, json);
                     await _context.SaveChangesAsync();
                 }
             }
@@ -474,8 +475,12 @@ namespace BackendToyo.Controllers
                 json = json.Replace($"{i}\"", $"{i}");
             }
             json = json.Replace("mp4", "mp4\"");
-
-            await System.IO.File.WriteAllTextAsync($"/tmp/toyoverse/{toyoPlayerReturn[0].TokenId}.json", json);
+            
+            var jsonfolder = new DirectoryInfo(_jsonFolderPath);
+            if(!jsonfolder.Exists) jsonfolder.Create();
+            var targetFile = $"{jsonfolder.FullName}{Path.DirectorySeparatorChar}{toyoPlayerReturn[0].TokenId}.json";
+            
+            await System.IO.File.WriteAllTextAsync(targetFile, json);
 
             toyoRaffle.qParts = new int[][] {
                  new int[] { 0, 0 },
@@ -531,12 +536,14 @@ namespace BackendToyo.Controllers
             return toyoRaffle;
         }
 
-        [ApiExplorerSettings(IgnoreApi = true)]
-        public async Task<List<SwapToyo>> SwapFunction(int TokenId, string walletAddress, string chainId)
+        private async Task<List<SwapToyo>> SwapFunction(int TokenId, string walletAddress, string chainId)
         {
-            Console.WriteLine("Entrou na função do swap {0}", TokenId);
-
-            var query = from scts in _context.Set<SmartContractToyoSwap>()
+            
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
+            var result = new List<SwapToyo>();
+            do{            
+                var query = from scts in _context.Set<SmartContractToyoSwap>()
                         join sctt in _context.Set<SmartContractToyoTransfer>()
                             on new
                             {
@@ -553,18 +560,23 @@ namespace BackendToyo.Controllers
                             on scts.ToTypeId equals sctty.TypeId
                         join tt in _context.Set<TypeToken>()
                             on sctty.TypeId equals tt.Id
-                        // where scts.FromTokenId == TokenId && sctt.WalletAddress == walletAddress && sctt.ChainId == chainId && tt.Type == "toyo"
+                        where scts.FromTokenId == TokenId && sctt.WalletAddress == walletAddress && sctt.ChainId == chainId && tt.Type == "toyo"
                         select new SwapToyo { TransactionHash = scts.TransactionHash, ChainId = scts.ChainId, ToTokenId = scts.ToTokenId, TypeToken = tt.Id, Name = sctty.Name };
+                result = await query.ToListAsync();
+            }while(continueSwapFunction(result, stopWatch));
 
-            var result = await query.ToListAsync();
-
-            Console.WriteLine("Retorno da query na função do swap {0}", result);
-
-            return await query.ToListAsync();
+            return result;
         }
 
-        [ApiExplorerSettings(IgnoreApi = true)]
-        public async Task<bool> saveToyoPlayer(ToyoPlayer _toyoPlayer)
+        private bool continueSwapFunction(List<SwapToyo> result, Stopwatch stopWatch)
+        {
+            if(result.Any()) return false;
+            if(stopWatch.ElapsedMilliseconds > _timeoutSwapFunction) return false;
+            Thread.Sleep(_intervalSwapFunctionQuery);
+            return true;
+        }
+
+        private async Task<bool> saveToyoPlayer(ToyoPlayer _toyoPlayer)
         {
             var toyoPlayer = await _context.ToyosPlayer.FirstOrDefaultAsync(p => p.WalletAddress == _toyoPlayer.WalletAddress && p.ChainId == _toyoPlayer.ChainId && p.TokenId == _toyoPlayer.TokenId && p.ToyoId == _toyoPlayer.ToyoId);
 
@@ -685,8 +697,11 @@ namespace BackendToyo.Controllers
             }
             json = json.Replace("mp4", "mp4\"");
 
-            await System.IO.File.WriteAllTextAsync($"/tmp/toyoverse/{newTokenId}.json", json);
-            //await System.IO.File.WriteAllTextAsync($"/tmp/toyoverse/1010.json", json);
+            var jsonfolder = new DirectoryInfo(_jsonFolderPath);
+            if(!jsonfolder.Exists) jsonfolder.Create();
+            var targetFile = $"{jsonfolder.FullName}{Path.DirectorySeparatorChar}{newTokenId}.json";
+            
+            await System.IO.File.WriteAllTextAsync(targetFile, json);
             Console.WriteLine("Json Saved");
             try
             {

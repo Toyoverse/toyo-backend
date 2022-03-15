@@ -1,9 +1,15 @@
+using Newtonsoft.Json;
+
 namespace BackendToyo.Models
 {
     public class PorcentageBonusView
     {
-        public string Ym9udXM  { get; set; }
-        public string dG9rZW5JZA  { get; set; }
+        [JsonProperty("Ym9udXM")]
+        public string bonus  { get; set; }
+        
+        [JsonProperty("dG9rZW5JZA")]
+        public string tokenId  { get; set; }
+        
         public string wallet { get; set; }
     }
 }
