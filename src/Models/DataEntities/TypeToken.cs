@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace BackendToyo.Models
+namespace BackendToyo.Models.DataEntities
 {
     public class TypeToken
     {
@@ -9,5 +9,7 @@ namespace BackendToyo.Models
         public string Name { get; set; }
         public string Type { get; set; }
         public string ChainId { get; set; }
+
+        public BoxType BoxType { get; set; } 
     }
 }

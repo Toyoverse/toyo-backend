@@ -14,6 +14,14 @@
     + time in milliseconds to wait the swap contract before get a timeout
 + *Toyo_Swap_Interval_Milliseconds*
     + time in milliseconds between each query on database while wait swap timeout
++ *Toyo_chain_id*
+    + transactions environment chain id (test = 80001, prod = 137)
++ *Toyo_Jwt_Secret*
+    + key to generate jwt
++ *Toyo_Jwt_Expiring_Time_Minutes* - (optional)
+    + time in minutes to expires jwt token. If no inform, default value is 60
++ *Toyo_Jwt_RefreshToken_Expires* - (optional)
+    + time in minutes to revalidate jwt token after expires. Default value is 60;
 ### **Running this project on docker containers:**
 
 1. #### Download this project

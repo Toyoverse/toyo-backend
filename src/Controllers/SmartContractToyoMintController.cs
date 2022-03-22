@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BackendToyo.Data;
-using BackendToyo.Models;
+using BackendToyo.Models.DataEntities;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BackendToyo.Controllers
 {
@@ -24,6 +24,7 @@ namespace BackendToyo.Controllers
         // GET: api/SmartContractToyoMint
         [HttpGet]
         [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "Block Chain Service")]
         public async Task<ActionResult<IEnumerable<SmartContractToyoMint>>> GetSmartContractToyoMints()
         {
             return await _context.SmartContractToyoMints.ToListAsync();
@@ -32,6 +33,7 @@ namespace BackendToyo.Controllers
         // GET: api/SmartContractToyoMint/5
         [HttpGet("{id}")]
         [ApiExplorerSettings(IgnoreApi = true)]
+        //[Authorize]
         public async Task<ActionResult<SmartContractToyoMint>> GetSmartContractToyoMint(string id)
         {
             var smartContractToyoMint = await _context.SmartContractToyoMints.FindAsync(id);
@@ -130,12 +132,12 @@ namespace BackendToyo.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> DeleteSmartContractToyoMint(string id)
         {
-            var smartContractToyoMint = await _context.SmartContractToyoMints.FindAsync(id);
-            if (smartContractToyoMint == null)
+            if (!SmartContractToyoMintExists(id))
             {
                 return NotFound();
             }
 
+            var smartContractToyoMint = await _context.SmartContractToyoMints.FindAsync(id);
             _context.SmartContractToyoMints.Remove(smartContractToyoMint);
             await _context.SaveChangesAsync();
 

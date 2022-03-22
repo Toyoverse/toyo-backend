@@ -1,21 +1,26 @@
-using System;
 using Microsoft.EntityFrameworkCore;
-using BackendToyo.Models;
-using Microsoft.AspNetCore.Mvc;
+using BackendToyo.Models.DataEntities;
 
 namespace BackendToyo.Data
 {
     public class AppDbContext : DbContext
     {
-        private IEntityTypeConfiguration<TypeToken> typeTokenConfiguration;
+        private readonly IEntityTypeConfiguration<TypeToken> _typeTokenConfiguration;
+        private readonly IEntityTypeConfiguration<BoxType> _boxTypeConfiguration;
+        private readonly IEntityTypeConfiguration<UserInfo> _userInfoConfiguration;
         public AppDbContext(
-            DbContextOptions<AppDbContext> options,
-            IEntityTypeConfiguration<TypeToken> typeTokenConfiguration
+            DbContextOptions<AppDbContext> options, 
+            IEntityTypeConfiguration<TypeToken> typeTokenConfiguration,
+            IEntityTypeConfiguration<BoxType> boxTypeConfiguration,
+            IEntityTypeConfiguration<UserInfo> userInfoConfiguration
             ) : base(options)
         {
-            this.typeTokenConfiguration = typeTokenConfiguration;
+            this._userInfoConfiguration = userInfoConfiguration;
+            this._typeTokenConfiguration = typeTokenConfiguration;
+            this._boxTypeConfiguration = boxTypeConfiguration;
         }
 
+        public DbSet<UserInfo> Users { get; set; }
         public DbSet<Token> Tokens { get; set; }
         public DbSet<TypeToken> TypeTokens { get; set; }
         public DbSet<Event> Events { get; set; }
@@ -31,9 +36,14 @@ namespace BackendToyo.Data
         public DbSet<SmartContractToyoTransfer> SmartContractToyoTransfers { get; set; }
         public DbSet<SmartContractToyoType> SmartContractToyoTypes { get; set; }
         public DbSet<SmartContractToyoSwap> SmartContractToyoSwaps { get; set; }
+        public DbSet<BoxType> BoxTypes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {   
+            modelBuilder.ApplyConfiguration<TypeToken>(_typeTokenConfiguration);
+            modelBuilder.ApplyConfiguration<BoxType>(_boxTypeConfiguration);
+            modelBuilder.ApplyConfiguration<UserInfo>(_userInfoConfiguration);
+            
             modelBuilder.Entity<SmartContractToyoMint>()
                 .HasKey(p => new { p.TransactionHash, p.TokenId, p.ChainId});
             
@@ -49,8 +59,6 @@ namespace BackendToyo.Data
             modelBuilder.Entity<SmartContractToyoType>()
                 .HasIndex(u => u.ChainId)
                 .IsUnique(false);
-
-            modelBuilder.ApplyConfiguration<TypeToken>(typeTokenConfiguration);
 
             modelBuilder.Entity<SmartContractToyoSwap>()
                 .HasKey(p => new { p.TransactionHash, p.FromTokenId, p.ToTokenId, p.ChainId});

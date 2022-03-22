@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BackendToyo.Data;
 using BackendToyo.Models;
+using BackendToyo.Models.DataEntities;
 
 namespace BackendToyo.Controllers
 {

@@ -1,8 +1,8 @@
-using BackendToyo.Models;
+using BackendToyo.Models.DataEntities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace BackendToyo.Data.EntityConfigurations
+namespace BackendToyo.Data.Configurations
 {
     public class TypeTokenConfiguration : IEntityTypeConfiguration<TypeToken>
     {
@@ -10,24 +10,24 @@ namespace BackendToyo.Data.EntityConfigurations
         {
             builder.HasKey(p => new { p.Id, p.ChainId });
             
-            builder.ToTable("tb_type_token");
+            builder.ToTable("TypeTokens");
             
             builder.Property(p => p.Id)
-                .HasColumnName("id_type_token")
+                .HasColumnName("TypeId")
                 .HasColumnType("int");
             
             builder.Property(p => p.ChainId)
-                .HasColumnName("id_chain")
+                .HasColumnName("ChainId")
                 .HasColumnType("varchar")
                 .HasMaxLength(10);
 
             builder.Property(p => p.Type)
-                .HasColumnName("ds_type_token")
+                .HasColumnName("Type")
                 .HasColumnType("varchar")
                 .HasMaxLength(20);
 
             builder.Property( p=> p.Name)
-                .HasColumnName("tx_name")
+                .HasColumnName("Name")
                 .HasColumnType("varchar")
                 .HasMaxLength(50);
         }
