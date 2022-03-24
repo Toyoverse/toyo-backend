@@ -21,9 +21,7 @@ namespace BackendToyo.Controllers
         [HttpGet("getBoxes")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseStatusEntity), StatusCodes.Status404NotFound)]
-        public abstract Task<ActionResult<List<BoxesViewModel>>> GetBoxes(string walletAddress);
-
-        
+        public abstract Task<ActionResult<List<BoxesViewModel>>> GetBoxes([FromQuery] string walletAddress);        
 
         [HttpGet("sortBox")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -33,7 +31,6 @@ namespace BackendToyo.Controllers
         [HttpGet("getParts")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseStatusEntity), StatusCodes.Status404NotFound)]
-
         public abstract Task<ActionResult<List<BoxesViewModel>>> getParts(string walletAddress);
     }
 }

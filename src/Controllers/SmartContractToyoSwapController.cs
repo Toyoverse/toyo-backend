@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BackendToyo.Data;
 using BackendToyo.Models.DataEntities;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BackendToyo.Controllers
 {
@@ -22,7 +23,7 @@ namespace BackendToyo.Controllers
 
         // GET: api/SmartContractToyoSwap
         [HttpGet]
-        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "Block Chain Service")]
         public async Task<ActionResult<IEnumerable<SmartContractToyoSwap>>> GetSmartContractToyoSwaps()
         {
             return await _context.SmartContractToyoSwaps.ToListAsync();
@@ -30,7 +31,7 @@ namespace BackendToyo.Controllers
 
         // GET: api/SmartContractToyoSwap/5
         [HttpGet("{FromTypeId}")]
-        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "Block Chain Service")]
 
         public async Task<ActionResult<SmartContractToyoSwap>> GetSmartContractToyoSwap(int FromTokenId, string ChainId)
         {
@@ -47,7 +48,7 @@ namespace BackendToyo.Controllers
         // PUT: api/SmartContractToyoSwap/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "Block Chain Service")]
         public async Task<IActionResult> PutSmartContractToyoSwap(string id, SmartContractToyoSwap smartContractToyoSwap)
         {
             if (id != smartContractToyoSwap.TransactionHash)
@@ -79,6 +80,7 @@ namespace BackendToyo.Controllers
         // POST: api/SmartContractToyoSwap
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize(Roles = "Block Chain Service")]
         public async Task<ActionResult<SmartContractToyoSwap>> PostSmartContractToyoSwap(SmartContractToyoSwap smartContractToyoSwap)
         { 
             var ToyoSwap = await _context.SmartContractToyoSwaps.FirstOrDefaultAsync(p => p.TransactionHash == smartContractToyoSwap.TransactionHash && p.ToTokenId == smartContractToyoSwap.ToTokenId && p.ChainId == smartContractToyoSwap.ChainId);
@@ -105,7 +107,7 @@ namespace BackendToyo.Controllers
 
         // DELETE: api/SmartContractToyoSwap/5
         [HttpDelete("{id}")]
-        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "Block Chain Service")]
         public async Task<IActionResult> DeleteSmartContractToyoSwap(string id)
         {
             var smartContractToyoSwap = await _context.SmartContractToyoSwaps.FindAsync(id);

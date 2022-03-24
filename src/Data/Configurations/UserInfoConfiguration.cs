@@ -15,17 +15,20 @@ namespace BackendToyo.Data.Configurations
             builder.Property(p => p.Login)
                 .HasColumnName("id_login")
                 .HasColumnType("varchar")
-                .HasMaxLength(20);
+                .HasMaxLength(20)
+                .IsRequired();
 
             builder.Property(p => p.Password)
                 .HasColumnName("tx_password")
                 .HasColumnType("varchar")
-                .HasMaxLength(100);
+                .HasMaxLength(100)
+                .IsRequired();
             
             builder.Property( p => p.Role)
                 .HasColumnName("tx_role")
                 .HasColumnType("varchar")
-                .HasMaxLength(30);
+                .HasMaxLength(30)
+                .IsRequired();
 
             builder.HasData(
                 new UserInfo{

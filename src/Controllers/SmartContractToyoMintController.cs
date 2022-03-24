@@ -33,7 +33,7 @@ namespace BackendToyo.Controllers
         // GET: api/SmartContractToyoMint/5
         [HttpGet("{id}")]
         [ApiExplorerSettings(IgnoreApi = true)]
-        //[Authorize]
+        [Authorize(Roles = "Block Chain Service")]
         public async Task<ActionResult<SmartContractToyoMint>> GetSmartContractToyoMint(string id)
         {
             var smartContractToyoMint = await _context.SmartContractToyoMints.FindAsync(id);
@@ -49,7 +49,7 @@ namespace BackendToyo.Controllers
         // PUT: api/SmartContractToyoMint/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "Block Chain Service")]
         public async Task<IActionResult> PutSmartContractToyoMint(string id, SmartContractToyoMint smartContractToyoMint)
         {
             if (id != smartContractToyoMint.TransactionHash)
@@ -79,8 +79,8 @@ namespace BackendToyo.Controllers
         }
 
         // POST: api/SmartContractToyoMint
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize(Roles = "Block Chain Service")]
         public async Task<ActionResult<SmartContractToyoMint>> PostSmartContractToyoMint(SmartContractToyoMint smartContractToyoMint)
         {
 
@@ -129,7 +129,7 @@ namespace BackendToyo.Controllers
 
         // DELETE: api/SmartContractToyoMint/5
         [HttpDelete("{id}")]
-        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "Block Chain Service")]
         public async Task<IActionResult> DeleteSmartContractToyoMint(string id)
         {
             if (!SmartContractToyoMintExists(id))
