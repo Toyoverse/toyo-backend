@@ -1,3 +1,5 @@
+using System.Text.Json;
+
 namespace BackendToyo.Models.ResponseEntities
 {
     public class ResponseStatusEntity
@@ -10,5 +12,10 @@ namespace BackendToyo.Models.ResponseEntities
 
         public int StatusCode { get; set; }
         public string Message { get; set; }
+
+        public override string ToString()
+        {
+            return JsonSerializer.Serialize(this);
+        }
     }
 }

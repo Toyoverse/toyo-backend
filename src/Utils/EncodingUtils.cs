@@ -1,8 +1,8 @@
 using System;
 
-namespace BackendToyo.Middleware
+namespace BackendToyo.Utils
 {
-    public static class base64DecodeEncode
+    public static class EncodingUtils
     {
         public static string Base64Encode(string text) {
             var textInBytes = System.Text.Encoding.UTF8.GetBytes(text);

@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BackendToyo.Data;
 using BackendToyo.Models;
+using BackendToyo.Models.DataEntities;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BackendToyo.Controllers
 {
@@ -23,7 +25,7 @@ namespace BackendToyo.Controllers
 
         // GET: api/SmartContractToyoSync
         [HttpGet]
-        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "Block Chain Service")]
         public async Task<ActionResult<IEnumerable<SmartContractToyoSync>>> GetSmartContractToyoSyncs()
         {
             return await _context.SmartContractToyoSyncs.ToListAsync();
@@ -31,7 +33,7 @@ namespace BackendToyo.Controllers
 
         // GET: api/SmartContractToyoSync/5
         [HttpGet("{id}")]
-        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "Block Chain Service")]
         public async Task<ActionResult<SmartContractToyoSync>> GetSmartContractToyoSync(string id)
         {
             var smartContractToyoSync = await _context.SmartContractToyoSyncs.FindAsync(id);
@@ -45,6 +47,7 @@ namespace BackendToyo.Controllers
         }
 
         [HttpGet("getLastBlockNumber")]
+        [Authorize(Roles = "Block Chain Service")]
         public async Task<ActionResult<int>> GetLastBlockNumber(string chainId, string contractAddress, string eventName)
         {            
             var smartContractToyoSync = await _context.SmartContractToyoSyncs.FirstOrDefaultAsync(p => p.ChainId == chainId && p.ContractAddress == contractAddress && p.EventName == eventName);
@@ -61,7 +64,7 @@ namespace BackendToyo.Controllers
         // PUT: api/SmartContractToyoSync/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "Block Chain Service")]
         public async Task<IActionResult> PutSmartContractToyoSync(string id, SmartContractToyoSync smartContractToyoSync)
         {
             if (id != smartContractToyoSync.ChainId)
@@ -93,6 +96,7 @@ namespace BackendToyo.Controllers
         // POST: api/SmartContractToyoSync
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize(Roles = "Block Chain Service")]
         public async Task<ActionResult<SmartContractToyoSync>> PostSmartContractToyoSync(SmartContractToyoSync smartContractToyoSync)
         { 
             var ToyoSync = await _context.SmartContractToyoSyncs.FirstOrDefaultAsync(p => p.ChainId == smartContractToyoSync.ChainId && p.ContractAddress == smartContractToyoSync.ContractAddress && p.EventName == smartContractToyoSync.EventName);
@@ -120,7 +124,7 @@ namespace BackendToyo.Controllers
 
         // DELETE: api/SmartContractToyoSync/5
         [HttpDelete("{id}")]
-        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "Block Chain Service")]
         public async Task<IActionResult> DeleteSmartContractToyoSync(string id)
         {
             var smartContractToyoSync = await _context.SmartContractToyoSyncs.FindAsync(id);

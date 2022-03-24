@@ -1,6 +1,6 @@
 using System;
 
-namespace BackendToyo.Models
+namespace BackendToyo.Models.DataEntities
 {
     public class Event
     {

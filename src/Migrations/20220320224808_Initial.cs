@@ -198,21 +198,19 @@ namespace BackendToyo.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "tb_type_token",
+                name: "tb_users",
                 columns: table => new
                 {
-                    id_type_token = table.Column<int>(type: "int", nullable: false),
-                    id_chain = table.Column<string>(type: "varchar(10)", maxLength: 10, nullable: false)
+                    id_login = table.Column<string>(type: "varchar(20)", maxLength: 20, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    tx_name = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: true)
+                    tx_password = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    ds_type_token = table.Column<string>(type: "varchar(20)", maxLength: 20, nullable: true)
+                    tx_role = table.Column<string>(type: "varchar(30)", maxLength: 30, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_tb_type_token", x => new { x.id_type_token, x.id_chain });
-                    table.UniqueConstraint("AK_tb_type_token_id_type_token", x => x.id_type_token);
+                    table.PrimaryKey("pk_login", x => x.id_login);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -248,6 +246,25 @@ namespace BackendToyo.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "TypeTokens",
+                columns: table => new
+                {
+                    TypeId = table.Column<int>(type: "int", nullable: false),
+                    ChainId = table.Column<string>(type: "varchar(10)", maxLength: 10, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Name = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Type = table.Column<string>(type: "varchar(20)", maxLength: 20, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TypeTokens", x => new { x.TypeId, x.ChainId });
+                    table.UniqueConstraint("AK_TypeTokens_TypeId", x => x.TypeId);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "PartsPlayer",
                 columns: table => new
                 {
@@ -276,26 +293,6 @@ namespace BackendToyo.Migrations
                         column: x => x.StatId,
                         principalTable: "Stats",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "Tokens",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    NFTId = table.Column<long>(type: "bigint", nullable: false),
-                    TypeId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Tokens", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Tokens_tb_type_token_TypeId",
-                        column: x => x.TypeId,
-                        principalTable: "tb_type_token",
-                        principalColumn: "id_type_token",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
@@ -339,6 +336,48 @@ namespace BackendToyo.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "BoxTypes",
+                columns: table => new
+                {
+                    BoxTypeId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    TypeId = table.Column<int>(type: "int", nullable: false),
+                    IsJakana = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    IsFortified = table.Column<bool>(type: "tinyint(1)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_boxtypes", x => x.BoxTypeId);
+                    table.ForeignKey(
+                        name: "FK_BoxTypes_TypeTokens_TypeId",
+                        column: x => x.TypeId,
+                        principalTable: "TypeTokens",
+                        principalColumn: "TypeId",
+                        onDelete: ReferentialAction.Restrict);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Tokens",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    NFTId = table.Column<long>(type: "bigint", nullable: false),
+                    TypeId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tokens", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Tokens_TypeTokens_TypeId",
+                        column: x => x.TypeId,
+                        principalTable: "TypeTokens",
+                        principalColumn: "TypeId",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "TxsTokenPlayer",
                 columns: table => new
                 {
@@ -373,23 +412,45 @@ namespace BackendToyo.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.InsertData(
+                table: "BoxTypes",
+                columns: new[] { "BoxTypeId", "IsFortified", "IsJakana", "TypeId" },
+                values: new object[,]
+                {
+                    { 1, false, false, 1 },
+                    { 2, true, false, 2 },
+                    { 3, false, true, 6 },
+                    { 4, true, true, 7 }
+                });
+
+            migrationBuilder.InsertData(
                 table: "Stats",
                 columns: new[] { "Id", "Description", "Name" },
                 values: new object[,]
                 {
-                    { 1, null, "Vitality" },
-                    { 2, null, "Strength" },
-                    { 3, null, "Resistance" },
-                    { 4, null, "CyberForce" },
-                    { 5, null, "Resilience" },
-                    { 6, null, "Precision" },
-                    { 7, null, "Technique" },
-                    { 8, null, "Analysis" },
-                    { 9, null, "Speed" },
-                    { 10, null, "Agility" },
                     { 11, null, "Stamina" },
-                    { 12, null, "Luck" }
+                    { 10, null, "Agility" },
+                    { 9, null, "Speed" },
+                    { 8, null, "Analysis" },
+                    { 7, null, "Technique" },
+                    { 5, null, "Resilience" },
+                    { 12, null, "Luck" },
+                    { 4, null, "CyberForce" },
+                    { 3, null, "Resistance" },
+                    { 2, null, "Strength" },
+                    { 1, null, "Vitality" },
+                    { 6, null, "Precision" }
                 });
+
+            migrationBuilder.InsertData(
+                table: "tb_users",
+                columns: new[] { "id_login", "tx_password", "tx_role" },
+                values: new object[] { "sync_service", "6fef533d07d5c11e14260529d9cea67978c31aee5d6e84f575f1dc95467dabbd", "Block Chain Service" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BoxTypes_TypeId",
+                table: "BoxTypes",
+                column: "TypeId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_PartsPlayer_PartId",
@@ -430,6 +491,9 @@ namespace BackendToyo.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "BoxTypes");
+
+            migrationBuilder.DropTable(
                 name: "Events");
 
             migrationBuilder.DropTable(
@@ -449,6 +513,9 @@ namespace BackendToyo.Migrations
 
             migrationBuilder.DropTable(
                 name: "SmartContractToyoTypes");
+
+            migrationBuilder.DropTable(
+                name: "tb_users");
 
             migrationBuilder.DropTable(
                 name: "ToyosPlayer");
@@ -472,7 +539,7 @@ namespace BackendToyo.Migrations
                 name: "Tokens");
 
             migrationBuilder.DropTable(
-                name: "tb_type_token");
+                name: "TypeTokens");
         }
     }
 }

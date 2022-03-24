@@ -16,6 +16,8 @@ using Microsoft.Extensions.Configuration;
 using System.IO;
 using BackendToyo.Models.ResponseEntities;
 using System.Threading;
+using BackendToyo.Models.DataEntities;
+using BackendToyo.Utils;
 
 namespace BackendToyo.Controllers
 {
@@ -25,20 +27,22 @@ namespace BackendToyo.Controllers
         private readonly int _timeoutSwapFunction;
         private readonly int _intervalSwapFunctionQuery;
         private readonly string _jsonFolderPath;
+        private readonly string _chainId;
         public ToyoBoxController(AppDbContext context, IConfiguration configuration)
         {
             _jsonFolderPath = configuration["Json_Folder"];
+            _chainId = configuration["Chain_Id"];
             _timeoutSwapFunction = int.Parse(configuration["Timeout_Swap_Milliseconds"]);
             _intervalSwapFunctionQuery = int.Parse(configuration["Swap_Interval_Milliseconds"]);
             _context = context;
         }
 
-        public async override Task<ActionResult<List<BoxesViewModel>>> GetBoxes(string walletAddress, string chainId)
+        public override async Task<ActionResult<List<BoxesViewModel>>> GetBoxes(string walletAddress)
         {
             var query = from sctt in _context.Set<SmartContractToyoTransfer>()
                         join owners in (
                             from _sctt in _context.Set<SmartContractToyoTransfer>()
-                            where _sctt.ChainId == chainId
+                            where _sctt.ChainId == _chainId
                             select new { _sctt.TokenId, _sctt.ChainId, _sctt.BlockNumber } into _scttS
                             group _scttS by new { _scttS.TokenId, _scttS.ChainId } into _scttGroup
                             select new { TokenId = _scttGroup.Key.TokenId, ChainId = _scttGroup.Key.ChainId, BlockNumber = _scttGroup.Select(p => p.BlockNumber).Max() }
@@ -59,15 +63,19 @@ namespace BackendToyo.Controllers
                             on sctm.TypeId equals sctty.TypeId
                         join tt in _context.Set<TypeToken>()
                             on sctty.TypeId equals tt.Id
-                        where sctt.WalletAddress == walletAddress && sctt.ChainId == chainId && tt.Type == "box"
+                        where sctt.WalletAddress == walletAddress && sctt.ChainId == _chainId && tt.Type == "box"
                         select new BoxesViewModel(sctt.TokenId, sctm.TypeId, sctty.Name);
 
             return await query.ToListAsync();
         }
 
-        [HttpGet("getParts")]
-        public async Task<ActionResult<List<BoxesViewModel>>> getParts(string walletAddress, string chainId)
+        public override async Task<ActionResult<List<BoxesViewModel>>> getParts(string walletAddress)
         {
+            if(_context.Set<SmartContractToyoTransfer>().Any(s => s.WalletAddress == walletAddress))
+            {
+                return NotFound(new ResponseStatusEntity(404, "wallet address not found"));
+            }
+
             var query = from sctt in _context.Set<SmartContractToyoTransfer>()
                         join sctm in _context.Set<SmartContractToyoMint>()
                             on sctt.TokenId equals sctm.TokenId
@@ -75,43 +83,43 @@ namespace BackendToyo.Controllers
                             on sctm.TypeId equals sctty.TypeId
                         join tt in _context.Set<TypeToken>()
                             on sctty.TypeId equals tt.Id
-                        where sctt.WalletAddress == walletAddress && sctt.ChainId == chainId && tt.Type == "parts"
+                        where sctt.WalletAddress == walletAddress && sctt.ChainId == _chainId && tt.Type == "parts"
                         select new BoxesViewModel(sctt.TokenId, sctm.TypeId, sctty.Name);
 
             return await query.ToListAsync();
         }
 
         [HttpGet("getStatusParts")]
-        public async Task<ActionResult<List<PartsStatsViewModel>>> getStatusParts(string walletAddress, string chainId, int tokenId)
+        public async Task<ActionResult<List<PartsStatsViewModel>>> getStatusParts(string walletAddress, int tokenId)
         {
             var query = from pp in _context.Set<PartPlayer>()
                         join s in _context.Set<Stat>()
                           on pp.StatId equals s.Id
                         join p in _context.Set<Parts>()
                           on pp.PartId equals p.Id
-                        where pp.TokenId == tokenId && pp.WalletAddress == walletAddress && pp.ChainId == chainId
+                        where pp.TokenId == tokenId && pp.WalletAddress == walletAddress && pp.ChainId == _chainId
                         select new PartsStatsViewModel(p.Part, s.Name, pp.BonusStat);
 
             return await query.ToListAsync();
         }
 
         [HttpGet("getStatusToyo")]
-        public async Task<ActionResult<List<ToyoStatsViewModel>>> getStatusToyo(string walletAddress, string chainId, int tokenId)
+        public async Task<ActionResult<List<ToyoStatsViewModel>>> getStatusToyo(string walletAddress, int tokenId)
         {
             var query = from tp in _context.Set<ToyoPlayer>()
-                        where tp.TokenId == tokenId && tp.WalletAddress == walletAddress && tp.ChainId == chainId
+                        where tp.TokenId == tokenId && tp.WalletAddress == walletAddress && tp.ChainId == _chainId
                         select new ToyoStatsViewModel(tp.ToyoId, tp.Vitality, tp.Strength, tp.Resistance, tp.CyberForce, tp.Resilience, tp.Precision, tp.Technique, tp.Analysis, tp.Speed, tp.Agility, tp.Stamina, tp.Luck);
 
             return await query.ToListAsync();
         }
 
         [HttpGet("getToyos")]
-        public async Task<ActionResult<List<ToyoViewModel>>> getToyos(string walletAddress, string chainId)
+        public async Task<ActionResult<List<ToyoViewModel>>> getToyos(string walletAddress)
         {
             var query = from sctt in _context.Set<SmartContractToyoTransfer>()
                         join owners in (
                             from _sctt in _context.Set<SmartContractToyoTransfer>()
-                            where _sctt.ChainId == chainId
+                            where _sctt.ChainId == _chainId
                             select new { _sctt.TokenId, _sctt.ChainId, _sctt.BlockNumber } into _scttS
                             group _scttS by new { _scttS.TokenId, _scttS.ChainId } into _scttGroup
                             select new { TokenId = _scttGroup.Key.TokenId, ChainId = _scttGroup.Key.ChainId, BlockNumber = _scttGroup.Select(p => p.BlockNumber).Max() }
@@ -136,7 +144,7 @@ namespace BackendToyo.Controllers
                             on sctt.TokenId equals tp.TokenId
                         join t in _context.Set<Toyo>()
                             on tp.ToyoId equals t.Id
-                        where sctt.WalletAddress == walletAddress && sctt.ChainId == chainId && tt.Type == "toyo"
+                        where sctt.WalletAddress == walletAddress && sctt.ChainId == _chainId && tt.Type == "toyo"
                         select new ToyoViewModel(sctt.TokenId, t.Name, t.Thumb, t.Video, tp.ChangeValue, t.Region);
 
 
@@ -160,20 +168,20 @@ namespace BackendToyo.Controllers
         } */
 
         public override async Task<ActionResult<SortViewModel>> sortBox(
-            int TypeId,
             int TokenId,
-            string walletAddress,
-            string chainId,
-            bool Fortified = false, 
-            bool Jakana = false)
+            string walletAddress
+        )
         {
-            bool isFortified = Fortified;
-            bool isJakana = Jakana;
-            // Console.WriteLine("TokenId - Sorteio: {0}", TokenId);
-            // Console.WriteLine("WalletAddress - Sorteio: {0}", walletAddress);
+            // get the type of token by token id and throws not found if not find
+            int? typeId = getTypeIdByTokenId(TokenId);
+            if(typeId == null) return NotFound(new ResponseStatusEntity(404, "TokenId Not Found"));
 
-            var toyoRaffle = raffle.main(Fortified, Jakana);
+            // get the box type by type id and throws bad reques if token type is not a closed box type
+            BoxType box = _context.Set<BoxType>().AsNoTracking().SingleOrDefault(s => s.TypeId == typeId);
+            if(typeId == null) return BadRequest(new ResponseStatusEntity(400, "TokenId is not a box"));
 
+            //sorts the rarity of toyo
+            var toyoRaffle = raffle.main(box.IsFortified, box.IsJakana);
             var queryToyo = from toyo in _context.Set<Toyo>()
                             where toyo.Id == toyoRaffle.toyoRaridade
                             select toyo;
@@ -210,8 +218,8 @@ namespace BackendToyo.Controllers
 
             List<SwapToyo> swapReturn = new List<SwapToyo>();
            
-            swapReturn = await SwapFunction(TokenId, walletAddress, chainId);
-            if(!swapReturn.Any()) return NotFound(new ResponseStatusEntity(404, "Not Found"));
+            swapReturn = await SwapFunction(TokenId, walletAddress);
+            if(!swapReturn.Any()) return NotFound(new ResponseStatusEntity(404, "Smart Contract Not Found"));
             
             ToyoPlayer _toyoPlayer = new ToyoPlayer
             {
@@ -230,7 +238,7 @@ namespace BackendToyo.Controllers
                 Stamina = toyoRaffle.qStats[11],
                 Luck = toyoRaffle.qStats[12],
                 WalletAddress = walletAddress,
-                ChainId = chainId,
+                ChainId = _chainId,
                 ChangeValue = false
             };
 
@@ -257,7 +265,7 @@ namespace BackendToyo.Controllers
                 {
                     if (i != 2)
                     {
-                        await savePartPlayer(toyoRaffle.toyoRaridade, i, swapReturn[0].ToTokenId, walletAddress, chainId, toyoRaffle.qParts[i][0], toyoRaffle.qParts[i][1]);
+                        await savePartPlayer(toyoRaffle.toyoRaridade, i, swapReturn[0].ToTokenId, walletAddress, _chainId, toyoRaffle.qParts[i][0], toyoRaffle.qParts[i][1]);
                     }
                 }
             }
@@ -270,36 +278,29 @@ namespace BackendToyo.Controllers
             return toyoRaffle;
         }
 
+        private int? getTypeIdByTokenId(int tokenId)
+        {
+            var toyomint = _context.Set<SmartContractToyoMint>().AsNoTracking().SingleOrDefault(
+                s => s.TokenId == tokenId 
+                && s.ChainId == _chainId);
+            if(toyomint == null) return null;
+            return toyomint.TypeId;
+        }
+
         [HttpPost("postPercentageBonus")]
         public async Task<bool> postPorcentageBonus(PorcentageBonusView porcentageBonusView)
         {
-            try
-            {
-                Console.WriteLine("Bonus received Code: {0}", porcentageBonusView.bonus);
-                Console.WriteLine("TokenId received Code: {0}", porcentageBonusView.tokenId);
-                Console.WriteLine("ChainId received: {0}", porcentageBonusView.wallet.Split(";")[1]);
-                Console.WriteLine("WalletAddress received: {0}", porcentageBonusView.wallet.Split(";")[0]);
-
-                Console.WriteLine("Bonus received Decode: {0}", base64DecodeEncode.Base64Decode(porcentageBonusView.bonus));
-                Console.WriteLine("TokenId received Decode: {0}", base64DecodeEncode.Base64Decode(porcentageBonusView.tokenId));
-
-            }
-            catch (SystemException e)
-            {
-                Console.WriteLine(e);
-            }
-
-            int _bonusCode = 0;
+            int _bonusCode;
             if (porcentageBonusView.bonus.Length > 0)
             {
-                _bonusCode = Convert.ToInt32(base64DecodeEncode.Base64Decode(porcentageBonusView.bonus));
+                _bonusCode = Convert.ToInt32(EncodingUtils.Base64Decode(porcentageBonusView.bonus));
             }
             else
             {
                 _bonusCode = 10;
             }
 
-            string tokenId = base64DecodeEncode.Base64Decode(porcentageBonusView.tokenId);
+            string tokenId = EncodingUtils.Base64Decode(porcentageBonusView.tokenId);
             string chainId = porcentageBonusView.wallet.Split(";")[1];
             string walletAddress = porcentageBonusView.wallet.Split(";")[0];
             float[] porcentageBonus = new float[] { 1, 1.01f, 1.02f, 1.03f, 1.04f, 1.05f, 1.08f, 1.11f, 1.14f, 1.17f, 1.2f };
@@ -346,10 +347,10 @@ namespace BackendToyo.Controllers
                     _toyoPlayer.ChangeValue = true;
 
                     List<AttributesJson> attributes = new List<AttributesJson> {
-                        new AttributesJson { display_type = "string", trait_type = "Type", value = "9" },
-                        new AttributesJson { display_type = "string", trait_type = "Toyo", value = _toyo.Name },
-                        new AttributesJson { display_type = "string", trait_type = "Region", value = _toyo.Region },
-                        new AttributesJson { display_type = "string", trait_type = "Rarity", value = (_toyo.Rarity == 1 ? "Common Edition" : (_toyo.Rarity == 2 ? "Uncommon Edition" : (_toyo.Rarity == 3 ? "Rare Edition" : (_toyo.Rarity == 4 ? "limited Edition" : (_toyo.Rarity == 5 ? "Collectors Edition" : "Prototype Edition" ))))) },
+                        new AttributesJson { trait_type = "Type", value = "9" },
+                        new AttributesJson { trait_type = "Toyo", value = _toyo.Name },
+                        new AttributesJson { trait_type = "Region", value = _toyo.Region },
+                        new AttributesJson { trait_type = "Rarity", value = (_toyo.Rarity == 1 ? "Common Edition" : (_toyo.Rarity == 2 ? "Uncommon Edition" : (_toyo.Rarity == 3 ? "Rare Edition" : (_toyo.Rarity == 4 ? "limited Edition" : (_toyo.Rarity == 5 ? "Collectors Edition" : "Prototype Edition" ))))) },
                         new AttributesJson { display_type = "number", trait_type = "Vitality", value = _toyoPlayer.Vitality.ToString() },
                         new AttributesJson { display_type = "number", trait_type = "Strength", value = _toyoPlayer.Strength.ToString() },
                         new AttributesJson { display_type = "number", trait_type = "Resistance", value = _toyoPlayer.Resistance.ToString() },
@@ -372,9 +373,9 @@ namespace BackendToyo.Controllers
                         animation_url = _toyo.Video,
                         attributes = attributes.ToArray()
                     };
-
-                    string json = JsonSerializer.Serialize(toyoJson);
-                    json = json.Replace("\"display_type\":\"string\",", "");
+                    var jsonOptions = new JsonSerializerOptions();
+                    jsonOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+                    string json = JsonSerializer.Serialize(toyoJson, jsonOptions);
                     for (int i = 0; i < 10; i++)
                     {
                         json = json.Replace($"\"{i}", $"{i}");
@@ -536,7 +537,7 @@ namespace BackendToyo.Controllers
             return toyoRaffle;
         }
 
-        private async Task<List<SwapToyo>> SwapFunction(int TokenId, string walletAddress, string chainId)
+        private async Task<List<SwapToyo>> SwapFunction(int TokenId, string walletAddress)
         {
             
             Stopwatch stopWatch = new Stopwatch();
@@ -560,7 +561,7 @@ namespace BackendToyo.Controllers
                             on scts.ToTypeId equals sctty.TypeId
                         join tt in _context.Set<TypeToken>()
                             on sctty.TypeId equals tt.Id
-                        where scts.FromTokenId == TokenId && sctt.WalletAddress == walletAddress && sctt.ChainId == chainId && tt.Type == "toyo"
+                        where scts.FromTokenId == TokenId && sctt.WalletAddress == walletAddress && sctt.ChainId == _chainId && tt.Type == "toyo"
                         select new SwapToyo { TransactionHash = scts.TransactionHash, ChainId = scts.ChainId, ToTokenId = scts.ToTokenId, TypeToken = tt.Id, Name = sctty.Name };
                 result = await query.ToListAsync();
             }while(continueSwapFunction(result, stopWatch));

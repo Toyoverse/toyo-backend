@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BackendToyo.Data;
 using BackendToyo.Models;
+using BackendToyo.Models.DataEntities;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BackendToyo.Controllers
 {
@@ -23,7 +25,7 @@ namespace BackendToyo.Controllers
 
         // GET: api/SmartContractToyoTransfer
         [HttpGet]
-        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "Block Chain Service")]
         public async Task<ActionResult<IEnumerable<SmartContractToyoTransfer>>> GetSmartContractToyoTransfers()
         {
             return await _context.SmartContractToyoTransfers.ToListAsync();
@@ -31,7 +33,7 @@ namespace BackendToyo.Controllers
 
         // GET: api/SmartContractToyoTransfer/5
         [HttpGet("{id}")]
-        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "Block Chain Service")]
         public async Task<ActionResult<SmartContractToyoTransfer>> GetSmartContractToyoTransfer(string id)
         {
             var smartContractToyoTransfer = await _context.SmartContractToyoTransfers.FindAsync(id);
@@ -47,7 +49,7 @@ namespace BackendToyo.Controllers
         // PUT: api/SmartContractToyoTransfer/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "Block Chain Service")]
         public async Task<IActionResult> PutSmartContractToyoTransfer(string id, SmartContractToyoTransfer smartContractToyoTransfer)
         {
             if (id != smartContractToyoTransfer.TransactionHash)
@@ -79,6 +81,7 @@ namespace BackendToyo.Controllers
         // POST: api/SmartContractToyoTransfer
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize(Roles = "Block Chain Service")]
         public async Task<ActionResult<SmartContractToyoTransfer>> PostSmartContractToyoTransfer(SmartContractToyoTransfer smartContractToyoTransfer)
         {
 
@@ -127,7 +130,7 @@ namespace BackendToyo.Controllers
 
         // DELETE: api/SmartContractToyoTransfer/5
         [HttpDelete("{id}")]
-        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "Block Chain Service")]
         public async Task<IActionResult> DeleteSmartContractToyoTransfer(string id)
         {
             var smartContractToyoTransfer = await _context.SmartContractToyoTransfers.FindAsync(id);

@@ -11,6 +11,7 @@ RUN cd /home && \
 RUN chmod +x /home/scriptDocker.sh
 RUN mkdir /tmp/toyoverse
 RUN dotnet dev-certs https --trust
+
 ENV ASPNETCORE_URLS=https://+
 ENV ASPNETCORE_ENVIRONMENT=Development
 ENV ASPNETCORE_HTTPS_PORT=443

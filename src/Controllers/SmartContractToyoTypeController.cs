@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BackendToyo.Data;
 using BackendToyo.Models;
+using BackendToyo.Models.DataEntities;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BackendToyo.Controllers
 {
@@ -23,7 +25,7 @@ namespace BackendToyo.Controllers
 
         // GET: api/SmartContractToyoType
         [HttpGet]
-        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "Block Chain Service")]
         public async Task<ActionResult<IEnumerable<SmartContractToyoType>>> GetSmartContractToyoTypes()
         {
             return await _context.SmartContractToyoTypes.ToListAsync();
@@ -31,7 +33,7 @@ namespace BackendToyo.Controllers
 
         // GET: api/SmartContractToyoType/5
         [HttpGet("{id}")]
-        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "Block Chain Service")]
         public async Task<ActionResult<SmartContractToyoType>> GetSmartContractToyoType(string id)
         {
             var smartContractToyoType = await _context.SmartContractToyoTypes.FindAsync(id);
@@ -47,7 +49,7 @@ namespace BackendToyo.Controllers
         // PUT: api/SmartContractToyoType/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "Block Chain Service")]
         public async Task<IActionResult> PutSmartContractToyoType(string id, SmartContractToyoType smartContractToyoType)
         {
             if (id != smartContractToyoType.TransactionHash)
@@ -79,6 +81,7 @@ namespace BackendToyo.Controllers
         // POST: api/SmartContractToyoType
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize(Roles = "Block Chain Service")]
         public async Task<ActionResult<SmartContractToyoType>> PostSmartContractToyoType(SmartContractToyoType smartContractToyoType)
         {
             _context.SmartContractToyoTypes.Add(smartContractToyoType);
@@ -103,7 +106,7 @@ namespace BackendToyo.Controllers
 
         // DELETE: api/SmartContractToyoType/5
         [HttpDelete("{id}")]
-        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "Block Chain Service")]
         public async Task<IActionResult> DeleteSmartContractToyoType(string id)
         {
             var smartContractToyoType = await _context.SmartContractToyoTypes.FindAsync(id);

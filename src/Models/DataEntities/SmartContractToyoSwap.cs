@@ -1,4 +1,4 @@
-namespace BackendToyo.Models
+namespace BackendToyo.Models.DataEntities
 { //sinx - 10 caixas fortified - typeid2
     public class SmartContractToyoSwap
     {

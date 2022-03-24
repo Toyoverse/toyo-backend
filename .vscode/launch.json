@@ -18,7 +18,8 @@
                 "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
             },
             "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
+                "ASPNETCORE_ENVIRONMENT": "Development",
+                "Toyo_Chain_Id": "80001"
             },
             "sourceFileMap": {
                 "/Views": "${workspaceFolder}/src/Views"

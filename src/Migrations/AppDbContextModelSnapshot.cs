@@ -3,6 +3,7 @@ using System;
 using BackendToyo.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BackendToyo.Migrations
@@ -17,7 +18,68 @@ namespace BackendToyo.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 64)
                 .HasAnnotation("ProductVersion", "5.0.12");
 
-            modelBuilder.Entity("BackendToyo.Models.Event", b =>
+            modelBuilder.Entity("BackendToyo.Models.DataEntities.BoxType", b =>
+                {
+                    b.Property<int>("BoxTypeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("BoxTypeId")
+                        .HasAnnotation("SqlServer:IdentityIncrement", 1)
+                        .HasAnnotation("SqlServer:IdentitySeed", 1)
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("IsFortified")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("IsFortified");
+
+                    b.Property<bool>("IsJakana")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("IsJakana");
+
+                    b.Property<int>("TypeId")
+                        .HasColumnType("int")
+                        .HasColumnName("TypeId");
+
+                    b.HasKey("BoxTypeId")
+                        .HasName("pk_boxtypes");
+
+                    b.HasIndex("TypeId")
+                        .IsUnique();
+
+                    b.ToTable("BoxTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            BoxTypeId = 1,
+                            IsFortified = false,
+                            IsJakana = false,
+                            TypeId = 1
+                        },
+                        new
+                        {
+                            BoxTypeId = 2,
+                            IsFortified = true,
+                            IsJakana = false,
+                            TypeId = 2
+                        },
+                        new
+                        {
+                            BoxTypeId = 3,
+                            IsFortified = false,
+                            IsJakana = true,
+                            TypeId = 6
+                        },
+                        new
+                        {
+                            BoxTypeId = 4,
+                            IsFortified = true,
+                            IsJakana = true,
+                            TypeId = 7
+                        });
+                });
+
+            modelBuilder.Entity("BackendToyo.Models.DataEntities.Event", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -37,7 +99,7 @@ namespace BackendToyo.Migrations
                     b.ToTable("Events");
                 });
 
-            modelBuilder.Entity("BackendToyo.Models.PartPlayer", b =>
+            modelBuilder.Entity("BackendToyo.Models.DataEntities.PartPlayer", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -70,7 +132,7 @@ namespace BackendToyo.Migrations
                     b.ToTable("PartsPlayer");
                 });
 
-            modelBuilder.Entity("BackendToyo.Models.Parts", b =>
+            modelBuilder.Entity("BackendToyo.Models.DataEntities.Parts", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -108,7 +170,7 @@ namespace BackendToyo.Migrations
                     b.ToTable("Parts");
                 });
 
-            modelBuilder.Entity("BackendToyo.Models.Player", b =>
+            modelBuilder.Entity("BackendToyo.Models.DataEntities.Player", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -134,7 +196,7 @@ namespace BackendToyo.Migrations
                     b.ToTable("Players");
                 });
 
-            modelBuilder.Entity("BackendToyo.Models.SmartContractToyoMint", b =>
+            modelBuilder.Entity("BackendToyo.Models.DataEntities.SmartContractToyoMint", b =>
                 {
                     b.Property<string>("TransactionHash")
                         .HasColumnType("varchar(255)");
@@ -168,7 +230,7 @@ namespace BackendToyo.Migrations
                     b.ToTable("SmartContractToyoMints");
                 });
 
-            modelBuilder.Entity("BackendToyo.Models.SmartContractToyoSwap", b =>
+            modelBuilder.Entity("BackendToyo.Models.DataEntities.SmartContractToyoSwap", b =>
                 {
                     b.Property<string>("TransactionHash")
                         .HasColumnType("varchar(255)");
@@ -199,7 +261,7 @@ namespace BackendToyo.Migrations
                     b.ToTable("SmartContractToyoSwaps");
                 });
 
-            modelBuilder.Entity("BackendToyo.Models.SmartContractToyoSync", b =>
+            modelBuilder.Entity("BackendToyo.Models.DataEntities.SmartContractToyoSync", b =>
                 {
                     b.Property<string>("ChainId")
                         .HasColumnType("varchar(255)");
@@ -218,7 +280,7 @@ namespace BackendToyo.Migrations
                     b.ToTable("SmartContractToyoSyncs");
                 });
 
-            modelBuilder.Entity("BackendToyo.Models.SmartContractToyoTransfer", b =>
+            modelBuilder.Entity("BackendToyo.Models.DataEntities.SmartContractToyoTransfer", b =>
                 {
                     b.Property<string>("TransactionHash")
                         .HasColumnType("varchar(255)");
@@ -240,7 +302,7 @@ namespace BackendToyo.Migrations
                     b.ToTable("SmartContractToyoTransfers");
                 });
 
-            modelBuilder.Entity("BackendToyo.Models.SmartContractToyoType", b =>
+            modelBuilder.Entity("BackendToyo.Models.DataEntities.SmartContractToyoType", b =>
                 {
                     b.Property<string>("TransactionHash")
                         .HasColumnType("varchar(255)");
@@ -270,7 +332,7 @@ namespace BackendToyo.Migrations
                     b.ToTable("SmartContractToyoTypes");
                 });
 
-            modelBuilder.Entity("BackendToyo.Models.Stat", b =>
+            modelBuilder.Entity("BackendToyo.Models.DataEntities.Stat", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -349,7 +411,7 @@ namespace BackendToyo.Migrations
                         });
                 });
 
-            modelBuilder.Entity("BackendToyo.Models.Token", b =>
+            modelBuilder.Entity("BackendToyo.Models.DataEntities.Token", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -368,7 +430,7 @@ namespace BackendToyo.Migrations
                     b.ToTable("Tokens");
                 });
 
-            modelBuilder.Entity("BackendToyo.Models.Toyo", b =>
+            modelBuilder.Entity("BackendToyo.Models.DataEntities.Toyo", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -418,7 +480,7 @@ namespace BackendToyo.Migrations
                     b.ToTable("Toyos");
                 });
 
-            modelBuilder.Entity("BackendToyo.Models.ToyoPlayer", b =>
+            modelBuilder.Entity("BackendToyo.Models.DataEntities.ToyoPlayer", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -482,7 +544,7 @@ namespace BackendToyo.Migrations
                     b.ToTable("ToyosPlayer");
                 });
 
-            modelBuilder.Entity("BackendToyo.Models.TxTokenPlayer", b =>
+            modelBuilder.Entity("BackendToyo.Models.DataEntities.TxTokenPlayer", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -518,50 +580,91 @@ namespace BackendToyo.Migrations
                     b.ToTable("TxsTokenPlayer");
                 });
 
-            modelBuilder.Entity("BackendToyo.Models.TypeToken", b =>
+            modelBuilder.Entity("BackendToyo.Models.DataEntities.TypeToken", b =>
                 {
                     b.Property<int>("Id")
                         .HasColumnType("int")
-                        .HasColumnName("id_type_token");
+                        .HasColumnName("TypeId");
 
                     b.Property<string>("ChainId")
                         .HasMaxLength(10)
                         .HasColumnType("varchar(10)")
-                        .HasColumnName("id_chain");
+                        .HasColumnName("ChainId");
 
                     b.Property<string>("Name")
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)")
-                        .HasColumnName("tx_name");
+                        .HasColumnName("Name");
 
                     b.Property<string>("Type")
                         .HasMaxLength(20)
                         .HasColumnType("varchar(20)")
-                        .HasColumnName("ds_type_token");
+                        .HasColumnName("Type");
 
                     b.HasKey("Id", "ChainId");
 
-                    b.ToTable("tb_type_token");
+                    b.ToTable("TypeTokens");
                 });
 
-            modelBuilder.Entity("BackendToyo.Models.PartPlayer", b =>
+            modelBuilder.Entity("BackendToyo.Models.DataEntities.UserInfo", b =>
                 {
-                    b.HasOne("BackendToyo.Models.Parts", null)
+                    b.Property<string>("Login")
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)")
+                        .HasColumnName("id_login");
+
+                    b.Property<string>("Password")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("tx_password");
+
+                    b.Property<string>("Role")
+                        .HasMaxLength(30)
+                        .HasColumnType("varchar(30)")
+                        .HasColumnName("tx_role");
+
+                    b.HasKey("Login")
+                        .HasName("pk_login");
+
+                    b.ToTable("tb_users");
+
+                    b.HasData(
+                        new
+                        {
+                            Login = "sync_service",
+                            Password = "6fef533d07d5c11e14260529d9cea67978c31aee5d6e84f575f1dc95467dabbd",
+                            Role = "Block Chain Service"
+                        });
+                });
+
+            modelBuilder.Entity("BackendToyo.Models.DataEntities.BoxType", b =>
+                {
+                    b.HasOne("BackendToyo.Models.DataEntities.TypeToken", "TypeToken")
+                        .WithOne("BoxType")
+                        .HasForeignKey("BackendToyo.Models.DataEntities.BoxType", "TypeId")
+                        .HasPrincipalKey("BackendToyo.Models.DataEntities.TypeToken", "Id");
+
+                    b.Navigation("TypeToken");
+                });
+
+            modelBuilder.Entity("BackendToyo.Models.DataEntities.PartPlayer", b =>
+                {
+                    b.HasOne("BackendToyo.Models.DataEntities.Parts", null)
                         .WithMany()
                         .HasForeignKey("PartId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BackendToyo.Models.Stat", null)
+                    b.HasOne("BackendToyo.Models.DataEntities.Stat", null)
                         .WithMany()
                         .HasForeignKey("StatId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("BackendToyo.Models.Token", b =>
+            modelBuilder.Entity("BackendToyo.Models.DataEntities.Token", b =>
                 {
-                    b.HasOne("BackendToyo.Models.TypeToken", null)
+                    b.HasOne("BackendToyo.Models.DataEntities.TypeToken", null)
                         .WithMany()
                         .HasForeignKey("TypeId")
                         .HasPrincipalKey("Id")
@@ -569,28 +672,33 @@ namespace BackendToyo.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("BackendToyo.Models.ToyoPlayer", b =>
+            modelBuilder.Entity("BackendToyo.Models.DataEntities.ToyoPlayer", b =>
                 {
-                    b.HasOne("BackendToyo.Models.Toyo", null)
+                    b.HasOne("BackendToyo.Models.DataEntities.Toyo", null)
                         .WithMany()
                         .HasForeignKey("ToyoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("BackendToyo.Models.TxTokenPlayer", b =>
+            modelBuilder.Entity("BackendToyo.Models.DataEntities.TxTokenPlayer", b =>
                 {
-                    b.HasOne("BackendToyo.Models.Player", null)
+                    b.HasOne("BackendToyo.Models.DataEntities.Player", null)
                         .WithMany()
                         .HasForeignKey("PlayerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BackendToyo.Models.Token", null)
+                    b.HasOne("BackendToyo.Models.DataEntities.Token", null)
                         .WithMany()
                         .HasForeignKey("TokenId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("BackendToyo.Models.DataEntities.TypeToken", b =>
+                {
+                    b.Navigation("BoxType");
                 });
 #pragma warning restore 612, 618
         }
