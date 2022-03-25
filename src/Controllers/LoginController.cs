@@ -29,37 +29,8 @@ namespace BackendToyo.Controllers
                 case AuthorizationType.BEARER:
                     return await GetTokenFromRefreshToken(authorization, refreshToken);
                 default:
-                    break;
+                    throw new InvalidCredentialsException("Tipo de autenticação inválido");
             };
-            UserInfo infos;
-            JsonWebTokenViewModel jwt;
-            infos = await _loginService.GetUserInfos(authorization);
-            if (infos != null)
-            {
-                try
-                {
-                    await _loginService.ValidateLogin(infos);
-                    UserInfo user = await _loginService.GetUser(infos.Login);
-                    var token = _tokenService.GenerateToken(user);
-                    jwt = new JsonWebTokenViewModel()
-                    {
-                        AccessToken = token,
-                        ExpiresInMinutes = _tokenService.GetExpiringJwtTime(),
-                        RefreshToken = _tokenService.GenerateRefreshToken(token)
-                    };
-                    return jwt;
-                }
-                catch (NotFoundException ex)
-                {
-                    return Unauthorized(new ResponseStatusEntity(401, ex.Message));
-                }
-                catch (InvalidPasswordException ex)
-                {
-                    return Unauthorized(new ResponseStatusEntity(401, ex.Message));
-                }
-            }
-            return null;
-
         }
 
         private async Task<ActionResult<JsonWebTokenViewModel>> GetTokenFromRefreshToken(string authorization, string refreshToken)
@@ -69,11 +40,11 @@ namespace BackendToyo.Controllers
             UserInfo info = await _tokenService.GetUserInfo(token);
             token = _tokenService.GenerateToken(info);
             refreshToken = _tokenService.GenerateRefreshToken(token);   
-            return new JsonWebTokenViewModel(){
+            return Ok(new JsonWebTokenViewModel(){
                 AccessToken = token,
                 ExpiresInMinutes = _tokenService.GetExpiringJwtTime(),
                 RefreshToken = refreshToken
-            };
+            });
         }
 
         private async Task<ActionResult<JsonWebTokenViewModel>> GetTokenFromBasicAuth(string authorization)
@@ -90,7 +61,7 @@ namespace BackendToyo.Controllers
                 ExpiresInMinutes = _tokenService.GetExpiringJwtTime(),
                 RefreshToken = _tokenService.GenerateRefreshToken(token)
             };
-            return jwt;
+            return Ok(jwt);
         }
     }
 }
