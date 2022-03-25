@@ -17,15 +17,19 @@ services:
     build: .
     container_name: toyo-backend
     environment:
-      Toyo_Json_Folder: "/tmp/toyoverse/"
-      Toyo_ConnectionStrings__DefaultConnection: "server=localhost;port=3308;database=toyo_dev_db;user=root;password=dG95byBkYXRhYmFzZQ==;Persist Security Info=False"
+      Json_Folder: "/tmp/toyoverse/"
+      ConnectionStrings__DefaultConnection: "server=toyo-db;port=3306;database=toyo_dev_db;user=root;password=dG95byBkYXRhYmFzZQ==;Persist Security Info=False"
+      Timeout_Swap_Milliseconds: 30000
+      Swap_Interval_Milliseconds: 1000
+      chain_id: 80001
+      Jwt_Secret: "akasl123990as8dasaqdlkqwe012312kklasda0sd09123lkasksd09"
+      Jwt_Expiring_Time_Minutes: 20
+      Jwt_RefreshToken_Expires: 20
     volumes:
       - /tmp/toyoverse:/tmp/toyoverse
     ports:
       - "80:80"
       - "443:443"
-      - "5000:5000"
-      - "5001:5001"
     networks:
       - toyo-network
     depends_on:

@@ -24,7 +24,8 @@ namespace BackendToyo.Controllers
         // GET: api/SmartContractToyoMint
         [HttpGet]
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "Block Chain Service")]
+        //[Authorize(Roles = "Block Chain Service")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<SmartContractToyoMint>>> GetSmartContractToyoMints()
         {
             return await _context.SmartContractToyoMints.ToListAsync();

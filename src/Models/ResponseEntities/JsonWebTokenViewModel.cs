@@ -1,16 +1,16 @@
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace BackendToyo.Models.ResponseEntities
 {
     public class JsonWebTokenViewModel
     {
-        [JsonProperty("access_token")]
+        [JsonPropertyName("access_token")]
         public string AccessToken { get; set; }
 
-        [JsonProperty("expires_in_minutes")]
+        [JsonPropertyName("expires_in_minutes")]
         public int ExpiresInMinutes { get; set; }
 
-        [JsonProperty("refresh_token")]
+        [JsonPropertyName("refresh_token")]
         public string RefreshToken { get; set; }
     }
 }
