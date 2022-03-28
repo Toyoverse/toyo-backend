@@ -21,10 +21,10 @@ services:
       ConnectionStrings__DefaultConnection: "server=toyo-db;port=3306;database=toyo_dev_db;user=root;password=dG95byBkYXRhYmFzZQ==;Persist Security Info=False"
       Timeout_Swap_Milliseconds: 30000
       Swap_Interval_Milliseconds: 1000
-      chain_id: 80001
+      Chain_Id: 80001
       Jwt_Secret: "akasl123990as8dasaqdlkqwe012312kklasda0sd09123lkasksd09"
-      Jwt_Expiring_Time_Minutes: 20
-      Jwt_RefreshToken_Expires: 20
+      Jwt_Expiring_Time_Minutes: 60
+      Jwt_RefreshToken_Expires: 60
     volumes:
       - /tmp/toyoverse:/tmp/toyoverse
     ports:
