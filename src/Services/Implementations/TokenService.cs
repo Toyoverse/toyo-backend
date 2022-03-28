@@ -29,12 +29,14 @@ namespace BackendToyo.Services
         {
             _userRepository = userRepository;
             _timeToRefresh = int.Parse(
-                configuration["Jwt_Expiring_Time_Minutes"] ?? DefaultValues.TIME_JWT_EXPIRES.ToString()
+                Environment.GetEnvironmentVariable("Jwt_Expiring_Time_Minutes") ??
+                DefaultValues.TIME_JWT_EXPIRES.ToString()
                 );
             _timeToExpire = int.Parse(
-                configuration["_Jwt_RefreshToken_Expires"] ?? DefaultValues.TIME_JWT_EXPIRES.ToString()
+                Environment.GetEnvironmentVariable("Jwt_RefreshToken_Expires")
+                ?? DefaultValues.TIME_JWT_REFRESH.ToString()
                 );
-            _jwtSecret = configuration["Jwt_Secret"];
+            _jwtSecret =  Environment.GetEnvironmentVariable("Jwt_Secret");
         }
 
         public string GenerateRefreshToken(string token)

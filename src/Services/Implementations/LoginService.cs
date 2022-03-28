@@ -25,6 +25,7 @@ namespace BackendToyo.Services.Implementations
 
         public async Task ValidateLogin(UserInfo infos)
         {
+            if(infos == null) throw new NotFoundException("User Not Found");
             var userExists = await _userRepository.UserExists(infos);
             var isValidPassword = await _userRepository.IsValidPassword(infos);
             if (!userExists) throw new NotFoundException("User Not Found");
@@ -33,7 +34,7 @@ namespace BackendToyo.Services.Implementations
 
         public async Task<UserInfo> GetUserInfos(string authenticationHeader)
         {
-            if (!authenticationHeader.Contains("Basic ")) return null;
+            if (!authenticationHeader.Contains("Basic ", StringComparison.CurrentCultureIgnoreCase)) return null;
 
             var filteredHeader = authenticationHeader.Replace("Basic ", "", StringComparison.InvariantCultureIgnoreCase);
 
