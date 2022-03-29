@@ -13,7 +13,6 @@ RUN mkdir /tmp/toyoverse
 RUN dotnet dev-certs https --trust
 
 ENV ASPNETCORE_URLS=https://+
-ENV ASPNETCORE_ENVIRONMENT=Development
 ENV ASPNETCORE_HTTPS_PORT=443
 
 RUN dotnet tool install --global dotnet-ef --version 5.0.12
