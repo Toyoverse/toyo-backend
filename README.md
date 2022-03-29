@@ -58,3 +58,13 @@
     The Entity Framework tools version '5.0.4' is older than that of the runtime '5.0.12'. Update the tools for the latest features and bug fixes.
     Done.
     ```
+
+## **To deploy on dev and prod**
+1. ### Run this command line
+#### - on dev environment
+> docker build -f "Dockerfile" --force-rm -t toyobackend:dev .
+> docker run docker run -d -p 443:443 -p 80:80 --env-file "./dev.env" --name toyo-backend toyobackend:dev
+
+#### - on prod environment
+> docker build -f "Dockerfile" --force-rm -t toyobackend:release .
+> docker run docker run -d -p 443:443 -p 80:80 --env-file "./prod.env" --name toyo-backend toyobackend:release
