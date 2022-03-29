@@ -11,7 +11,7 @@ namespace BackendToyo.Data.Configurations
             builder.HasKey(p => p.Login).HasName("pk_login");
 
             builder.ToTable("tb_users");
-
+            
             builder.Property(p => p.Login)
                 .HasColumnName("id_login")
                 .HasColumnType("varchar")

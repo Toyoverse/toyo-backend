@@ -63,8 +63,8 @@
 1. ### Run this command line
 #### - on dev environment
 > docker build -f "Dockerfile" --force-rm -t toyobackend:dev .
-> docker run docker run -d -p 443:443 -p 80:80 --env-file "./dev.env" --name toyo-backend toyobackend:dev
+> docker run -d -p 443:443 -p 80:80 --env-file "./dev.env" --name toyo-backend toyobackend:dev
 
 #### - on prod environment
 > docker build -f "Dockerfile" --force-rm -t toyobackend:release .
-> docker run docker run -d -p 443:443 -p 80:80 --env-file "./prod.env" --name toyo-backend toyobackend:release
+> docker run -d -p 443:443 -p 80:80 --env-file "./prod.env" --name toyo-backend toyobackend:release

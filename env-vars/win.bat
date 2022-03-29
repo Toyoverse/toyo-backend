@@ -1,4 +1,4 @@
-setx Toyo_ConnectionStrings__DefaultConnection "server=localhost;port=3308;database=toyo_dev_db;user=root;password=dG95byBkYXRhYmFzZQ==;Persist Security Info=False"
+setx Toyo_ConnectionStrings__DefaultConnection "server=172.28.0.2;port=3306;database=backendToyo;user=root;password=f97a07ce59;Persist Security Info=False"
 setx Toyo_Json_Folder "C:/temp/toyoverse"
 setx Toyo_Timeout_Swap_Milliseconds "4000"
 setx Toyo_Swap_Interval_Milliseconds "1000"
