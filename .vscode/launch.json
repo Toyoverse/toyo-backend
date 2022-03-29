@@ -19,7 +19,8 @@
             },
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development",
-                "Toyo_Chain_Id": "80001"
+                "Toyo_Chain_Id": "80001",
+                "Toyo_ConnectionStrings__DefaultConnection": "server=rds-cluster-dev.cchr0wglwmdv.us-east-2.rds.amazonaws.com;port=3306;database=devdb;user=admindb;password=58qWGlEh0e^aYd=!!zj>;Persist Security Info=False;Max Pool Size=100000"
             },
             "sourceFileMap": {
                 "/Views": "${workspaceFolder}/src/Views"
