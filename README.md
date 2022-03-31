@@ -62,9 +62,10 @@
 ## **To deploy on dev and prod**
 1. ### Run this command line
 #### - on dev environment
-> docker build -f "Dockerfile" --force-rm -t toyobackend:dev .
-> docker run -d -p 443:443 -p 80:80 --env-file "./dev.env" --name toyo-backend toyobackend:dev
+
+> docker-compose --env-file "./dev.env" up --build --force-recreate -d
+
 
 #### - on prod environment
-> docker build -f "Dockerfile" --force-rm -t toyobackend:release .
-> docker run -d -p 443:443 -p 80:80 --env-file "./prod.env" --name toyo-backend toyobackend:release
+
+> docker-compose --env-file "./prod.env" up --build --force-recreate -d
