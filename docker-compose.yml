@@ -24,3 +24,5 @@ services:
 
 networks:
   toyo-net:
+    external:
+      name: toyo-net
