@@ -56,9 +56,7 @@ namespace BackendToyo.Controllers
             {
                 return NotFound();
             }
-
             return smartContractToyoSync.LastBlockNumber;
-
         }
 
         // PUT: api/SmartContractToyoSync/5

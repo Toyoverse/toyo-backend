@@ -21,7 +21,7 @@ using BackendToyo.Utils;
 
 namespace BackendToyo.Controllers
 {
-    public class ToyoBoxController : ToyoBoxApi 
+    public class ToyoBoxController : ToyoBoxApi
     {
         private readonly AppDbContext _context;
         private readonly int _timeoutSwapFunction;
@@ -66,12 +66,13 @@ namespace BackendToyo.Controllers
                         where sctt.WalletAddress == walletAddress && sctt.ChainId == _chainId && tt.Type == "box"
                         select new BoxesViewModel(sctt.TokenId, sctm.TypeId, sctty.Name);
 
+
             return await query.ToListAsync();
         }
 
         public override async Task<ActionResult<List<BoxesViewModel>>> getParts(string walletAddress)
         {
-            if(_context.Set<SmartContractToyoTransfer>().Any(s => s.WalletAddress == walletAddress))
+            if (_context.Set<SmartContractToyoTransfer>().Any(s => s.WalletAddress == walletAddress))
             {
                 return NotFound(new ResponseStatusEntity(404, "wallet address not found"));
             }
@@ -174,11 +175,11 @@ namespace BackendToyo.Controllers
         {
             // get the type of token by token id and throws not found if not find
             int? typeId = getTypeIdByTokenId(TokenId);
-            if(typeId == null) return NotFound(new ResponseStatusEntity(404, "TokenId Not Found"));
+            if (typeId == null) return NotFound(new ResponseStatusEntity(404, "TokenId Not Found"));
 
             // get the box type by type id and throws bad reques if token type is not a closed box type
             BoxType box = _context.Set<BoxType>().AsNoTracking().SingleOrDefault(s => s.TypeId == typeId);
-            if(typeId == null) return BadRequest(new ResponseStatusEntity(400, "TokenId is not a box"));
+            if (box == null) return BadRequest(new ResponseStatusEntity(400, "TokenId is not a box"));
 
             //sorts the rarity of toyo
             var toyoRaffle = raffle.main(box.IsFortified, box.IsJakana);
@@ -217,10 +218,10 @@ namespace BackendToyo.Controllers
             };
 
             List<SwapToyo> swapReturn = new List<SwapToyo>();
-           
+
             swapReturn = await SwapFunction(TokenId, walletAddress);
-            if(!swapReturn.Any()) return NotFound(new ResponseStatusEntity(404, "Smart Contract Not Found"));
-            
+            if (!swapReturn.Any()) return NotFound(new ResponseStatusEntity(404, "Smart Contract Not Found"));
+
             ToyoPlayer _toyoPlayer = new ToyoPlayer
             {
                 ToyoId = toyoRaffle.toyoRaridade,
@@ -252,9 +253,9 @@ namespace BackendToyo.Controllers
             json = json.Replace("mp4", "mp4\"");
 
             var jsonfolder = new DirectoryInfo(_jsonFolderPath);
-            if(!jsonfolder.Exists) jsonfolder.Create();
+            if (!jsonfolder.Exists) jsonfolder.Create();
 
-            await System.IO.File.WriteAllTextAsync(Path.Combine(jsonfolder.FullName,$"{swapReturn[0].ToTokenId}.json"), json);
+            await System.IO.File.WriteAllTextAsync(Path.Combine(jsonfolder.FullName, $"{swapReturn[0].ToTokenId}.json"), json);
             //await System.IO.File.WriteAllTextAsync($"/tmp/toyoverse/1010.json", json);
             Console.WriteLine("Json Saved");
             try
@@ -281,9 +282,9 @@ namespace BackendToyo.Controllers
         private int? getTypeIdByTokenId(int tokenId)
         {
             var toyomint = _context.Set<SmartContractToyoMint>().AsNoTracking().SingleOrDefault(
-                s => s.TokenId == tokenId 
+                s => s.TokenId == tokenId
                 && s.ChainId == _chainId);
-            if(toyomint == null) return null;
+            if (toyomint == null) return null;
             return toyomint.TypeId;
         }
 
@@ -382,11 +383,11 @@ namespace BackendToyo.Controllers
                         json = json.Replace($"{i}\"", $"{i}");
                     }
                     json = json.Replace("mp4", "mp4\"");
-                   
+
                     var jsonfolder = new DirectoryInfo(_jsonFolderPath);
-                    if(!jsonfolder.Exists) jsonfolder.Create();
+                    if (!jsonfolder.Exists) jsonfolder.Create();
                     var targetFile = $"{jsonfolder.FullName}{Path.DirectorySeparatorChar}{tokenId}.json";
-                    
+
                     await System.IO.File.WriteAllTextAsync(targetFile, json);
                     await _context.SaveChangesAsync();
                 }
@@ -476,11 +477,11 @@ namespace BackendToyo.Controllers
                 json = json.Replace($"{i}\"", $"{i}");
             }
             json = json.Replace("mp4", "mp4\"");
-            
+
             var jsonfolder = new DirectoryInfo(_jsonFolderPath);
-            if(!jsonfolder.Exists) jsonfolder.Create();
+            if (!jsonfolder.Exists) jsonfolder.Create();
             var targetFile = $"{jsonfolder.FullName}{Path.DirectorySeparatorChar}{toyoPlayerReturn[0].TokenId}.json";
-            
+
             await System.IO.File.WriteAllTextAsync(targetFile, json);
 
             toyoRaffle.qParts = new int[][] {
@@ -539,40 +540,41 @@ namespace BackendToyo.Controllers
 
         private async Task<List<SwapToyo>> SwapFunction(int TokenId, string walletAddress)
         {
-            
+
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
             var result = new List<SwapToyo>();
-            do{            
+            do
+            {
                 var query = from scts in _context.Set<SmartContractToyoSwap>()
-                        join sctt in _context.Set<SmartContractToyoTransfer>()
-                            on new
-                            {
-                                _toyoTransaction = scts.TransactionHash,
-                                _toyoChain = scts.ChainId,
-                                _toyoTokenId = scts.ToTokenId
-                            } equals new
-                            {
-                                _toyoTransaction = sctt.TransactionHash,
-                                _toyoChain = sctt.ChainId,
-                                _toyoTokenId = sctt.TokenId
-                            }
-                        join sctty in _context.Set<SmartContractToyoType>()
-                            on scts.ToTypeId equals sctty.TypeId
-                        join tt in _context.Set<TypeToken>()
-                            on sctty.TypeId equals tt.Id
-                        where scts.FromTokenId == TokenId && sctt.WalletAddress == walletAddress && sctt.ChainId == _chainId && tt.Type == "toyo"
-                        select new SwapToyo { TransactionHash = scts.TransactionHash, ChainId = scts.ChainId, ToTokenId = scts.ToTokenId, TypeToken = tt.Id, Name = sctty.Name };
+                            join sctt in _context.Set<SmartContractToyoTransfer>()
+                                on new
+                                {
+                                    _toyoTransaction = scts.TransactionHash,
+                                    _toyoChain = scts.ChainId,
+                                    _toyoTokenId = scts.ToTokenId
+                                } equals new
+                                {
+                                    _toyoTransaction = sctt.TransactionHash,
+                                    _toyoChain = sctt.ChainId,
+                                    _toyoTokenId = sctt.TokenId
+                                }
+                            join sctty in _context.Set<SmartContractToyoType>()
+                                on scts.ToTypeId equals sctty.TypeId
+                            join tt in _context.Set<TypeToken>()
+                                on sctty.TypeId equals tt.Id
+                            where scts.FromTokenId == TokenId && sctt.WalletAddress == walletAddress && sctt.ChainId == _chainId && tt.Type == "toyo"
+                            select new SwapToyo { TransactionHash = scts.TransactionHash, ChainId = scts.ChainId, ToTokenId = scts.ToTokenId, TypeToken = tt.Id, Name = sctty.Name };
                 result = await query.ToListAsync();
-            }while(continueSwapFunction(result, stopWatch));
+            } while (continueSwapFunction(result, stopWatch));
 
             return result;
         }
 
         private bool continueSwapFunction(List<SwapToyo> result, Stopwatch stopWatch)
         {
-            if(result.Any()) return false;
-            if(stopWatch.ElapsedMilliseconds > _timeoutSwapFunction) return false;
+            if (result.Any()) return false;
+            if (stopWatch.ElapsedMilliseconds > _timeoutSwapFunction) return false;
             Thread.Sleep(_intervalSwapFunctionQuery);
             return true;
         }
@@ -699,9 +701,9 @@ namespace BackendToyo.Controllers
             json = json.Replace("mp4", "mp4\"");
 
             var jsonfolder = new DirectoryInfo(_jsonFolderPath);
-            if(!jsonfolder.Exists) jsonfolder.Create();
+            if (!jsonfolder.Exists) jsonfolder.Create();
             var targetFile = $"{jsonfolder.FullName}{Path.DirectorySeparatorChar}{newTokenId}.json";
-            
+
             await System.IO.File.WriteAllTextAsync(targetFile, json);
             Console.WriteLine("Json Saved");
             try

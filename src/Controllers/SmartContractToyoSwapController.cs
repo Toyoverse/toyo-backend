@@ -83,7 +83,12 @@ namespace BackendToyo.Controllers
         [Authorize(Roles = "Block Chain Service")]
         public async Task<ActionResult<SmartContractToyoSwap>> PostSmartContractToyoSwap(SmartContractToyoSwap smartContractToyoSwap)
         { 
-            var ToyoSwap = await _context.SmartContractToyoSwaps.FirstOrDefaultAsync(p => p.TransactionHash == smartContractToyoSwap.TransactionHash && p.ToTokenId == smartContractToyoSwap.ToTokenId && p.ChainId == smartContractToyoSwap.ChainId);
+            var ToyoSwap = 
+                await _context.SmartContractToyoSwaps
+                .FirstOrDefaultAsync(p => 
+                    p.TransactionHash == smartContractToyoSwap.TransactionHash 
+                    && p.ToTokenId == smartContractToyoSwap.ToTokenId 
+                    && p.ChainId == smartContractToyoSwap.ChainId);
             
             try
             {
