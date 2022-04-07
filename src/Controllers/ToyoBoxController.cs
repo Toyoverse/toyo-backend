@@ -72,7 +72,7 @@ namespace BackendToyo.Controllers
 
         public override async Task<ActionResult<List<BoxesViewModel>>> getParts(string walletAddress)
         {
-            if (_context.Set<SmartContractToyoTransfer>().Any(s => s.WalletAddress == walletAddress))
+            if (! _context.Set<SmartContractToyoTransfer>().Any(s => s.WalletAddress == walletAddress))
             {
                 return NotFound(new ResponseStatusEntity(404, "wallet address not found"));
             }
