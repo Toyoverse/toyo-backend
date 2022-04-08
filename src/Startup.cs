@@ -36,7 +36,7 @@ namespace BackendToyo
             {
                 options.AddDefaultPolicy(builder =>
                 {
-                    builder.WithOrigins("*");
+                    builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
                 });
             });
             addServices(services);
