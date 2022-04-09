@@ -19,18 +19,22 @@ namespace BackendToyo.Controllers
     public abstract class ToyoBoxApi : ControllerBase
     {
         [HttpGet("getBoxes")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ResponseStatusEntity), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(typeof(ResponseStatusEntity), 404)]
         public abstract Task<ActionResult<List<BoxesViewModel>>> GetBoxes([FromQuery] string walletAddress);        
 
         [HttpGet("sortBox")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ResponseStatusEntity), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(typeof(ResponseStatusEntity),404)]
         public abstract Task<ActionResult<SortViewModel>> sortBox(int TokenId, string walletAddress);
     
         [HttpGet("getParts")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ResponseStatusEntity), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(typeof(ResponseStatusEntity), 404)]
         public abstract Task<ActionResult<List<BoxesViewModel>>> getParts(string walletAddress);
+
+        [HttpPost("postPercentageBonus")]
+        [ProducesResponseType(typeof(ResponseStatusEntity), 200)]
+        public abstract Task<ActionResult<ResponseStatusEntity>> postPorcentageBonus(PorcentageBonusView porcentageBonusView);
     }
 }

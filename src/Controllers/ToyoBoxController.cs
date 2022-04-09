@@ -63,7 +63,9 @@ namespace BackendToyo.Controllers
                             on sctm.TypeId equals sctty.TypeId
                         join tt in _context.Set<TypeToken>()
                             on sctty.TypeId equals tt.Id
-                        where sctt.WalletAddress == walletAddress && sctt.ChainId == _chainId && tt.Type == "box"
+                        join box in _context.Set<BoxType>()
+                            on tt.Id equals box.TypeId
+                        where sctt.WalletAddress == walletAddress && sctt.ChainId == _chainId
                         select new BoxesViewModel(sctt.TokenId, sctm.TypeId, sctty.Name);
 
 
@@ -289,7 +291,7 @@ namespace BackendToyo.Controllers
         }
 
         [HttpPost("postPercentageBonus")]
-        public async Task<bool> postPorcentageBonus(PorcentageBonusView porcentageBonusView)
+        public override async Task<ActionResult<ResponseStatusEntity>> postPorcentageBonus(PorcentageBonusView porcentageBonusView)
         {
             int _bonusCode;
             if (porcentageBonusView.bonus.Length > 0)
@@ -393,7 +395,7 @@ namespace BackendToyo.Controllers
                 }
             }
 
-            return true;
+            return Ok(new ResponseStatusEntity(200, "updated toyo"));
         }
 
         [HttpGet("minigame")]
