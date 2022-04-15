@@ -185,6 +185,7 @@ namespace BackendToyo.Controllers
 
             //sorts the rarity of toyo
             var toyoRaffle = raffle.main(box.IsFortified, box.IsJakana);
+            if(toyoRaffle.toyoRaridade == 9) toyoRaffle.toyoRaridade = 8;   
             var queryToyo = from toyo in _context.Set<Toyo>()
                             where toyo.Id == toyoRaffle.toyoRaridade
                             select toyo;
