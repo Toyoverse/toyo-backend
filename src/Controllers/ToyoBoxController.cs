@@ -380,13 +380,7 @@ namespace BackendToyo.Controllers
                     var jsonOptions = new JsonSerializerOptions();
                     jsonOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
                     string json = JsonSerializer.Serialize(toyoJson, jsonOptions);
-                    for (int i = 0; i < 10; i++)
-                    {
-                        json = json.Replace($"\"{i}", $"{i}");
-                        json = json.Replace($"{i}\"", $"{i}");
-                    }
-                    json = json.Replace("mp4", "mp4\"");
-
+                    
                     var jsonfolder = new DirectoryInfo(_jsonFolderPath);
                     if (!jsonfolder.Exists) jsonfolder.Create();
                     var targetFile = $"{jsonfolder.FullName}{Path.DirectorySeparatorChar}{tokenId}.json";
