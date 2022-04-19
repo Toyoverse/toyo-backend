@@ -100,7 +100,7 @@ namespace BackendToyo.Controllers
                           on pp.StatId equals s.Id
                         join p in _context.Set<Parts>()
                           on pp.PartId equals p.Id
-                        where pp.TokenId == tokenId && pp.WalletAddress == walletAddress && pp.ChainId == _chainId
+                        where pp.TokenId == tokenId && pp.ChainId == _chainId
                         select new PartsStatsViewModel(p.Part, s.Name, pp.BonusStat);
 
             return await query.ToListAsync();
