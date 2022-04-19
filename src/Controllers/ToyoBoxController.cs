@@ -63,7 +63,9 @@ namespace BackendToyo.Controllers
                             on sctm.TypeId equals sctty.TypeId
                         join tt in _context.Set<TypeToken>()
                             on sctty.TypeId equals tt.Id
-                        where sctt.WalletAddress == walletAddress && sctt.ChainId == _chainId && tt.Type == "box"
+                        join box in _context.Set<BoxType>()
+                            on tt.Id equals box.TypeId
+                        where sctt.WalletAddress == walletAddress && sctt.ChainId == _chainId
                         select new BoxesViewModel(sctt.TokenId, sctm.TypeId, sctty.Name);
 
 
@@ -72,7 +74,7 @@ namespace BackendToyo.Controllers
 
         public override async Task<ActionResult<List<BoxesViewModel>>> getParts(string walletAddress)
         {
-            if (_context.Set<SmartContractToyoTransfer>().Any(s => s.WalletAddress == walletAddress))
+            if (! _context.Set<SmartContractToyoTransfer>().Any(s => s.WalletAddress == walletAddress))
             {
                 return NotFound(new ResponseStatusEntity(404, "wallet address not found"));
             }
@@ -183,6 +185,7 @@ namespace BackendToyo.Controllers
 
             //sorts the rarity of toyo
             var toyoRaffle = raffle.main(box.IsFortified, box.IsJakana);
+            if(toyoRaffle.toyoRaridade == 9) toyoRaffle.toyoRaridade = 8;
             var queryToyo = from toyo in _context.Set<Toyo>()
                             where toyo.Id == toyoRaffle.toyoRaridade
                             select toyo;
@@ -289,7 +292,7 @@ namespace BackendToyo.Controllers
         }
 
         [HttpPost("postPercentageBonus")]
-        public async Task<bool> postPorcentageBonus(PorcentageBonusView porcentageBonusView)
+        public override async Task<ActionResult<ResponseStatusEntity>> postPorcentageBonus(PorcentageBonusView porcentageBonusView)
         {
             int _bonusCode;
             if (porcentageBonusView.bonus.Length > 0)
@@ -304,7 +307,7 @@ namespace BackendToyo.Controllers
             string tokenId = EncodingUtils.Base64Decode(porcentageBonusView.tokenId);
             string chainId = porcentageBonusView.wallet.Split(";")[1];
             string walletAddress = porcentageBonusView.wallet.Split(";")[0];
-            float[] porcentageBonus = new float[] { 1, 1.01f, 1.02f, 1.03f, 1.04f, 1.05f, 1.08f, 1.11f, 1.14f, 1.17f, 1.2f };
+            float[] porcentageBonus = new float[] { 1, 1.01f, 1.02f, 1.03f, 1.04f, 1.05f, 1.08f, 1.11f, 1.14f, 1.17f, 1.44f };
 
             //int[] numBase = new int[] { 0, 582, 49751, 67412, 714, 65852, 4414, 8857445, 5114514, 222541, 6367 };
 
@@ -393,7 +396,7 @@ namespace BackendToyo.Controllers
                 }
             }
 
-            return true;
+            return Ok(new ResponseStatusEntity(200, "updated toyo"));
         }
 
         [HttpGet("minigame")]

@@ -36,7 +36,10 @@ namespace BackendToyo
             {
                 options.AddDefaultPolicy(builder =>
                 {
-                    builder.WithOrigins("*");
+                    builder
+                        .AllowAnyMethod()
+                        .AllowAnyOrigin()
+                        .AllowAnyHeader();
                 });
             });
             addServices(services);
@@ -108,7 +111,6 @@ namespace BackendToyo
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "BackendToyo v1"));
             }
-
             app.UseHttpsRedirection();
             app.ConfigureExceptionHandler();
             app.UseRouting();
