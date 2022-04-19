@@ -245,12 +245,12 @@ namespace BackendToyo.Controllers
 
             string json = JsonSerializer.Serialize(toyoJson);
             json = json.Replace("\"display_type\":\"string\",", "");
-            for (int i = 0; i < 10; i++)
-            {
-                json = json.Replace($"\"{i}", $"{i}");
-                json = json.Replace($"{i}\"", $"{i}");
-            }
-            json = json.Replace("mp4", "mp4\"");
+            // for (int i = 0; i < 10; i++)
+            // {
+            //     json = json.Replace($"\"{i}", $"{i}");
+            //     json = json.Replace($"{i}\"", $"{i}");
+            // }
+            // json = json.Replace("mp4", "mp4\"");
 
             var jsonfolder = new DirectoryInfo(_jsonFolderPath);
             if (!jsonfolder.Exists) jsonfolder.Create();
