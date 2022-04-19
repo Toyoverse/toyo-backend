@@ -110,7 +110,7 @@ namespace BackendToyo.Controllers
         public async Task<ActionResult<List<ToyoStatsViewModel>>> getStatusToyo(string walletAddress, int tokenId)
         {
             var query = from tp in _context.Set<ToyoPlayer>()
-                        where tp.TokenId == tokenId && tp.WalletAddress == walletAddress && tp.ChainId == _chainId
+                        where tp.TokenId == tokenId && tp.ChainId == _chainId
                         select new ToyoStatsViewModel(tp.ToyoId, tp.Vitality, tp.Strength, tp.Resistance, tp.CyberForce, tp.Resilience, tp.Precision, tp.Technique, tp.Analysis, tp.Speed, tp.Agility, tp.Stamina, tp.Luck);
 
             return await query.ToListAsync();
