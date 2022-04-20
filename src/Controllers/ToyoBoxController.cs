@@ -184,11 +184,7 @@ namespace BackendToyo.Controllers
             if (box == null) return BadRequest(new ResponseStatusEntity(400, "TokenId is not a box"));
 
             //sorts the rarity of toyo
-            SortViewModel toyoRaffle;
-            
-            do{
-                toyoRaffle = raffle.main(box.IsFortified, box.IsJakana);
-            }while(toyoRaffle.toyoRaridade == 9);
+            SortViewModel toyoRaffle = raffle.main(box.IsFortified, box.IsJakana);
 
             var queryToyo = from toyo in _context.Set<Toyo>()
                             where toyo.Id == toyoRaffle.toyoRaridade
