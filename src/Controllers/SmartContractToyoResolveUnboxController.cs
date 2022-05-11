@@ -28,17 +28,30 @@ namespace BackendToyo.Controllers
         public async Task<ActionResult<IEnumerable<SmartContractToyoSwap>>> GetSmartContractToyoResolveUnbox(int tokenId, String walletAdress)
         {
             var swap = await _context.SmartContractToyoSwaps.Where(p=> p.ToTokenId == tokenId).ToListAsync();
-            if (swap ==null || swap.Count() != 1) return null;
             var transfer = await _context.SmartContractToyoTransfers.Where(p => p.TokenId == tokenId).ToListAsync();
-            if (transfer ==null || transfer.Count() != 1) return null;
             var mint = await _context.SmartContractToyoMints.Where(p=> p.TokenId == tokenId).ToListAsync();
-            if (mint == null || mint.Count() != 1) return null;
             var toyoPlayer = await _context.ToyosPlayer.Where(p=> p.WalletAddress == walletAdress && p.TokenId == tokenId).ToListAsync();
-            if (toyoPlayer == null || toyoPlayer.Count() != 1) return null;
+            
+            try
+            {
+                if (swap ==null || swap.Count() != 1) error();
+                if (transfer ==null || transfer.Count() != 1) error();
+                if (mint == null || mint.Count() != 1) error();
+                if (toyoPlayer == null || toyoPlayer.Count() != 1) error();
+            }
+            catch(System.Exception e)
+            {
+                Console.WriteLine("Error: ");
+                Console.WriteLine(e.ToString());
+                return NotFound(e);
+            }
             //toDo
-            return swap; //Alterar o tipo de retorno ao termino da task
+            return null; //Alterar o tipo de retorno ao termino da task
         }
 
-
+        private void error()
+        {
+            throw new SystemException();
+        }
     }
 }
