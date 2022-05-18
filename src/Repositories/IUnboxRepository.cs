@@ -15,5 +15,10 @@ namespace BackendToyo.Repositories
         public Task<List<SmartContractToyoTransfer>> transferList(int tokenId);
         public Task<List<ToyoPlayer>> toyoListByToken(int tokenId, string walletAddress);
         public Task<BoxType> typeBoxType(int type);
+        public Task<List<Toyo>> returnToyo (int toyoRaridade);
+        public Task<List<SwapToyo>> SwapFunction(int tokenId, string walletAddress);
+        public Task<bool> saveToyoPlayer(ToyoPlayer _toyoPlayer);
+        public Task<bool> savePartPlayer(int toyoId, int part, int tokenId, string walletAddress, string chainId, int statId, int bonusStat);
+        public Task<int> getTypeIdByTokenId(int fromTokenId);
     }
 }

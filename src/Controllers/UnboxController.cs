@@ -19,7 +19,7 @@ namespace BackendToyo.Controllers
         public override async Task<ActionResult<SortViewModel>> sortUnbox(int tokenId, string walletAddress)
         {
             var swap = await _unboxService.verifyCondition(tokenId, walletAddress);
-            if (swap != null) return await _unboxService.SortBox(swap);
+            if (swap != null) return await _unboxService.SortUnbox(swap);
             return null;
         }
     }

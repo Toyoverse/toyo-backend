@@ -12,6 +12,6 @@ namespace BackendToyo.Services
     public interface IUnboxService
     {
         public Task<SmartContractToyoSwap> verifyCondition(int tokenId, string walletAdress);
-        public Task<ActionResult<SortViewModel>> SortBox(SmartContractToyoSwap swap);
+        public Task<ActionResult<SortViewModel>> SortUnbox(SmartContractToyoSwap swap);
     }
 }
