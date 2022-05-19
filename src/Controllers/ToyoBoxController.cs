@@ -245,7 +245,7 @@ namespace BackendToyo.Controllers
                 ChainId = _chainId,
                 ChangeValue = false
             };
-
+            
             string json = JsonSerializer.Serialize(toyoJson);
             json = json.Replace("\"display_type\":\"string\",", "");
             // for (int i = 0; i < 10; i++)

@@ -59,6 +59,7 @@ namespace BackendToyo
         private void addRepositories(IServiceCollection services)
         {
             services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<IUnboxRepository, UnboxRepository>();
         }
 
         private void addAuthentication(IServiceCollection services)
@@ -92,6 +93,7 @@ namespace BackendToyo
             services.AddScoped<ISortRaffleService, SortRaffleService>();
             services.AddTransient<ILoginService, LoginService>();
             services.AddTransient<ITokenService, TokenService>();
+            services.AddTransient<IUnboxService, UnboxService>();
         }
 
         private void addContextConfigurations(IServiceCollection services)
