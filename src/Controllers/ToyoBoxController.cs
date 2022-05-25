@@ -306,16 +306,15 @@ namespace BackendToyo.Controllers
 
             string tokenId = EncodingUtils.Base64Decode(porcentageBonusView.tokenId);
             string chainId = porcentageBonusView.wallet.Split(";")[1];
-            string walletAddress = porcentageBonusView.wallet.Split(";")[0];
             float[] porcentageBonus = new float[] { 1, 1.01f, 1.02f, 1.03f, 1.04f, 1.05f, 1.08f, 1.11f, 1.14f, 1.17f, 1.44f };
 
             //int[] numBase = new int[] { 0, 582, 49751, 67412, 714, 65852, 4414, 8857445, 5114514, 222541, 6367 };
 
             ToyoPlayer _toyoPlayer = new ToyoPlayer();
             Toyo _toyo = new Toyo();
-
+            
             var queryToyoPlayer = from toyoPlayer in _context.Set<ToyoPlayer>()
-                                  where toyoPlayer.TokenId == Convert.ToInt32(tokenId) && toyoPlayer.WalletAddress == walletAddress && toyoPlayer.ChainId == chainId
+                                  where toyoPlayer.TokenId == Convert.ToInt32(tokenId) && toyoPlayer.ChainId == chainId
                                   select toyoPlayer;
 
             _toyoPlayer = await queryToyoPlayer.FirstOrDefaultAsync();
